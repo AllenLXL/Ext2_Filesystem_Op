@@ -167,6 +167,7 @@ void construct_ll(char* path){
             ll_length++;
         }
     }
+    free(path);
 }
 
 
@@ -181,6 +182,7 @@ int validate_abs_path(char* path){
         fprintf(stderr, "invalid abs path");
         exit(1);
     }
+    return 1;
 }
 
 /*
@@ -193,7 +195,7 @@ char* get_new_dir_name(char* path){
         length++;
     }
     char path_cpy[length+1];
-    memset(path_cpy, length+1, '\0');
+    memset(path_cpy, '\0', length+1);
     strncpy(path_cpy, path, length);
 
     // remove last slash if exist

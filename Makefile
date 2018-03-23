@@ -1,17 +1,13 @@
 CFlag = -Wall -g -std=gnu99
 
-fs : ext2_mkdir.o ext2_utils.o
-	gcc $(CFlag) -o fs $^
-
-cp : ext2_cp.o ext2_utils.o
-	gcc $(CFlag) -o cp $^
+all : ext2_mkdir
 
 mkdir : ext2_mkdir.o ext2_utils.o
-	gcc $(CFlag) -o cp $^
+	gcc $(CFlag) -o $@ $^
 
-%.o : %.c ext2_utils.h ext2.h
+%.o: %.c ext2_utils.h ext2.h
 	gcc $(CFlag) -c $<
 
 clean :
-	rm -f *.o traffic *~
+	rm *.o mkdir
 

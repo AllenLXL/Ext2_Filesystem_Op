@@ -8,10 +8,14 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    if (argv[1][0]!='/') {
+    if (argv[2][0]!='/') {
         fprintf(stderr,"not abs path");
         exit(1);
     }
+    init_ptrs(argv[1]);
+    char* good_path = convert_path(argv[2]);
+    construct_ll(good_path);
+
     int free_inode_idx = find_free_inode() + 1;
     int free_block_idx = find_free_block() + 1;
 
@@ -39,7 +43,7 @@ int main(int argc, char **argv) {
     unsigned int parent_idx = modify_parent_block() - 1;
 
     //set first dir_entry to itself
-    struct ext2_dir_entry_2 *new_dir_entry = (struct ext2_dir_entry_2 *)(disk + (free_block_idx * EXT2_BLOCK_SIZE));
+    struct ext2_dir_entry *new_dir_entry = (struct ext2_dir_entry *)(disk + (free_block_idx * EXT2_BLOCK_SIZE));
     new_dir_entry->inode = free_inode_idx;
     new_dir_entry->rec_len = 12;
     new_dir_entry->name_len = 1;
@@ -47,8 +51,8 @@ int main(int argc, char **argv) {
     strncpy(new_dir_entry->name, ".", 1);
 
     //set another dir_entry to = parent
-    new_dir_entry = (struct ext2_dir_entry_2 *)((char *)new_dir_entry + new_dir_entry->rec_len);
-    new_dir_entry->inode = ((struct ext2_dir_entry_2 *)(disk + (inode_table[parent_idx].i_block[0] * EXT2_BLOCK_SIZE)))->inode;
+    new_dir_entry = (struct ext2_dir_entry *)((char *)new_dir_entry + new_dir_entry->rec_len);
+    new_dir_entry->inode = ((struct ext2_dir_entry *)(disk + (inode_table[parent_idx].i_block[0] * EXT2_BLOCK_SIZE)))->inode;
     new_dir_entry->rec_len = 12;
     new_dir_entry->name_len = 2;
     new_dir_entry->file_type = EXT2_FT_DIR;
