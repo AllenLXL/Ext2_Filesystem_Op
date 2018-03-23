@@ -3,7 +3,7 @@ project(a4)
 
 set(CMAKE_CXX_STANDARD -std=gnu99)
 
-add_executable(
+add_executable(a4
         ext2.h
         ext2_checker.c
         ext2_cp.c
