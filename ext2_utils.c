@@ -6,6 +6,48 @@
 #include "ext2_utils.h"
 #include <stdlib.h>
 
+
+
+//TODO====================================================
+/* Helper function for debugging purposes*/
+void print_bm(){
+    int in_use;
+//    unsigned char *bb_content = disk + (EXT2_BLOCK_SIZE * gdt->bg_block_bitmap);
+    printf("Block bitmap: ");
+    for (int byte = 0; byte < 16; byte++){
+        for (int bit = 0; bit < 8; bit++){
+            in_use = block_bm[byte] & (1 << bit);
+            if (in_use){
+                printf("%d", 1);
+            } else{
+                printf("%d", in_use);
+            }
+        }
+        if (byte!=16-1){
+            printf(" ");
+        }
+    }
+    printf("\n");
+//    unsigned char *ib_content = disk + (EXT2_BLOCK_SIZE * gdt->bg_inode_bitmap);
+    printf("Inode bitmap: ");
+
+    for (int byte = 0; byte < 32 / 8; byte++){
+        for (int bit = 0; bit < 8; bit++){
+            in_use = inode_bm[byte] & (1 << bit);
+            if (in_use){
+                printf("%d", 1);
+            } else{
+                printf("%d", in_use);
+            }
+        }
+        if (byte!=4-1){
+            printf(" ");
+        }
+    }
+    printf("\nbit map printing finishing\n");
+}
+//TODO====================================================
+
 /*
  * This function is for initialize all necessary pointer for every operations.
  * On success return image file descriptor, o.w. exit.
@@ -75,22 +117,26 @@ int find_free_block(){
 void set_bitmap(int bm_idx ,int idx, int mode){
     idx --;
     int num_bit;
+    unsigned char* target_bm;
     if (!bm_idx){
         num_bit = sb->s_blocks_count;
+        target_bm = block_bm;
     } else{
         num_bit = sb->s_inodes_count;
+        target_bm = inode_bm;
     }
-    int cur_idx = 0;
 
     for (int byte = 0; byte < num_bit / 8; byte++){
         for (int bit = 0; bit < 8; bit++){
-            if (cur_idx == idx){
+            if ((byte*8+bit) == idx){
                 if (mode){
-                    block_bm[byte] = (unsigned char) (block_bm[byte] | (1 << bit));
+                    target_bm[byte] = (unsigned char) (target_bm[byte] | (1 << bit));
+                    break;
                 } else{
                     int temp = 0xff;
                     temp = temp ^ (1 << bit);
-                    block_bm[byte] = (unsigned char) (block_bm[byte] & temp);
+                    target_bm[byte] = (unsigned char) (target_bm[byte] & temp);
+                    break;
                 }
             }
         }
@@ -163,6 +209,7 @@ void construct_ll(char* path){
             ll_node->name = malloc(dir_length* sizeof(char));
             memcpy(ll_node->name, &path[i], dir_length);
             ll_node->next = front;
+            front = ll_node;
             ll_node->name_len = dir_length;
             ll_length++;
         }
@@ -269,18 +316,23 @@ unsigned int modify_parent_block(){
         dir_entry = (void*)(dir_entry) + dir_entry -> rec_len;
 
     }
+
+
+    struct ext2_dir_entry * new_dir = (struct ext2_dir_entry *)(disk + current->i_block[0]*EXT2_BLOCK_SIZE + k + 8 + dir_entry->name_len);
+    new_dir->name_len= (unsigned char) current_node->name_len;
+    strncpy(new_dir->name, current_node->name, current_node->name_len);
+    new_dir->rec_len= (unsigned short) (EXT2_BLOCK_SIZE - k);
+
     int last_padding = EXT2_BLOCK_SIZE - k - 8 - dir_entry->name_len;
     if (last_padding < (current_node->name_len+8)){
         fprintf(stderr, "no enough space in this block, gg.");
         exit(1); //TODO exit code?
     }
 
-    struct ext2_dir_entry * new_dir = (struct ext2_dir_entry *)(disk + current->i_block[0]*EXT2_BLOCK_SIZE + k + 8 + dir_entry->name_len);
-    new_dir->name_len= (unsigned char) current_node->name_len;
-    strncpy(new_dir->name, current_node->name, current_node->name_len);
-    new_dir->rec_len= (unsigned short) (EXT2_BLOCK_SIZE - k);
     new_dir->inode= (unsigned int) (find_free_inode() + 1);
     new_dir->file_type=EXT2_FT_DIR;
+
+
 
     return result;
 }

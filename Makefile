@@ -11,3 +11,6 @@ mkdir : ext2_mkdir.o ext2_utils.o
 clean :
 	rm *.o mkdir
 
+reset:
+	cp clean_images/* images/
+

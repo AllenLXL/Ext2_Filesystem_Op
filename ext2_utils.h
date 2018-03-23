@@ -25,6 +25,8 @@ unsigned char *inode_bm;
 
 struct ext2_inode *inode_table;
 
+void print_bm();
+
 int init_ptrs(char* img_file);
 
 int find_free_inode();

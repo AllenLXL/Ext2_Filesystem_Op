@@ -13,6 +13,7 @@ int main(int argc, char **argv) {
         exit(1);
     }
     init_ptrs(argv[1]);
+    print_bm();
     char* good_path = convert_path(argv[2]);
     construct_ll(good_path);
 
@@ -60,7 +61,9 @@ int main(int argc, char **argv) {
     inode_table[parent_idx].i_links_count++;
 
     // switch bitmap off
-    set_bitmap(0, free_inode_idx-1, 0);
-    set_bitmap(1, free_block_idx-1, 0);
+    set_bitmap(0, free_inode_idx, 1);
+    set_bitmap(1, free_block_idx, 1);
+
+    print_bm();
 
 }
