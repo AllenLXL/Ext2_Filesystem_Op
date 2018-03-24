@@ -26,6 +26,9 @@ unsigned char *inode_bm;
 struct ext2_inode *inode_table;
 
 void print_bm();
+void print_dir_block(struct ext2_dir_entry* first_row);
+
+
 
 int init_ptrs(char* img_file);
 
@@ -50,6 +53,7 @@ typedef struct linked_list{
 ll* front;
 int ll_length;
 
+void init_inode(struct ext2_inode* new_inode);
 #endif //A4_EXT2_UTILS_H
 
 

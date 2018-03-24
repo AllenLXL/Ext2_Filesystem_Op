@@ -1,12 +1,5 @@
-//
-// Created by LiAllen on 2018-03-19.
-//
-
 
 #include "ext2_utils.h"
-#include <stdlib.h>
-
-
 
 //TODO====================================================
 /* Helper function for debugging purposes*/
@@ -45,6 +38,23 @@ void print_bm(){
         }
     }
     printf("\nbit map printing finishing\n");
+}
+
+void print_dir_block(struct ext2_dir_entry* first_row){
+    int k = 0;
+    while (k < EXT2_BLOCK_SIZE) {
+        if (EXT2_FT_REG_FILE == first_row->file_type) {
+            printf("Inode: %d rec_len: %d name_len: %d type= f name=%.*s\n",
+                   first_row->inode, first_row->rec_len, first_row->name_len,first_row->name_len,first_row->name);
+        }
+        else if (EXT2_FT_DIR == first_row->file_type) {
+            printf("Inode: %d rec_len: %d name_len: %d type= d name=%.*s\n",
+                   first_row->inode, first_row->rec_len, first_row->name_len,first_row->name_len,first_row->name);
+        }
+        k += first_row->rec_len;
+        first_row = (void*)(first_row) + first_row -> rec_len;
+    }
+    printf("print finished ================================\n");
 }
 //TODO====================================================
 
@@ -116,21 +126,21 @@ int find_free_block(){
  */
 void set_bitmap(int bm_idx ,int idx, int mode){
     idx --;
-    int num_bit;
+    int num_bit = 0;
     unsigned char* target_bm;
     if (!bm_idx){
-        num_bit = sb->s_blocks_count;
-        target_bm = block_bm;
-    } else{
         num_bit = sb->s_inodes_count;
         target_bm = inode_bm;
+    } else{
+        num_bit = sb->s_blocks_count;
+        target_bm = block_bm;
     }
 
     for (int byte = 0; byte < num_bit / 8; byte++){
         for (int bit = 0; bit < 8; bit++){
             if ((byte*8+bit) == idx){
                 if (mode){
-                    target_bm[byte] = (unsigned char) (target_bm[byte] | (1 << bit));
+                    target_bm[byte] = (unsigned char) (target_bm[byte] | (1 << (bit)));
                     break;
                 } else{
                     int temp = 0xff;
@@ -305,11 +315,22 @@ unsigned int modify_parent_block(){
             dir_entry = (void*)(dir_entry) + dir_entry -> rec_len;
         }
     }
+    print_dir_block(dir_entry);
 
     unsigned int result = dir_entry->inode;
 
+    struct ext2_dir_entry* need_deleted = dir_entry;
+
     while (k < EXT2_BLOCK_SIZE) {
         if (k+dir_entry->rec_len == EXT2_BLOCK_SIZE){
+            int begin = k;
+            int row_len = 8 + dir_entry->name_len;
+            k+=row_len;
+            while ((row_len)%4!=0){
+                row_len++;
+                k++;
+            }
+            dir_entry->rec_len = (unsigned short) (k - begin);
             break;
         }
         k += dir_entry->rec_len;
@@ -317,8 +338,7 @@ unsigned int modify_parent_block(){
 
     }
 
-
-    struct ext2_dir_entry * new_dir = (struct ext2_dir_entry *)(disk + current->i_block[0]*EXT2_BLOCK_SIZE + k + 8 + dir_entry->name_len);
+    struct ext2_dir_entry * new_dir = (struct ext2_dir_entry *)(disk + current->i_block[0]*EXT2_BLOCK_SIZE+k);
     new_dir->name_len= (unsigned char) current_node->name_len;
     strncpy(new_dir->name, current_node->name, current_node->name_len);
     new_dir->rec_len= (unsigned short) (EXT2_BLOCK_SIZE - k);
@@ -332,7 +352,18 @@ unsigned int modify_parent_block(){
     new_dir->inode= (unsigned int) (find_free_inode() + 1);
     new_dir->file_type=EXT2_FT_DIR;
 
-
+    print_dir_block(need_deleted);
 
     return result;
+}
+
+void init_inode(struct ext2_inode* new_inode){
+    // the following are trivial staff
+    new_inode->i_gid = 0;
+    new_inode->i_uid = 0;
+    new_inode->osd1 = 0;
+    new_inode->i_generation = 0;
+    new_inode->i_file_acl = 0;    /* File ACL */
+    new_inode->i_dir_acl = 0;     /* Directory ACL */
+    new_inode->i_faddr = 0;
 }

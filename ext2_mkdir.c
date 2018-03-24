@@ -7,13 +7,7 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Usage: %s <image file name> <abs path of file sys>", argv[0]);
         exit(1);
     }
-
-    if (argv[2][0]!='/') {
-        fprintf(stderr,"not abs path");
-        exit(1);
-    }
     init_ptrs(argv[1]);
-    print_bm();
     char* good_path = convert_path(argv[2]);
     construct_ll(good_path);
 
@@ -26,14 +20,7 @@ int main(int argc, char **argv) {
     new_inode->i_size = EXT2_BLOCK_SIZE;
     new_inode->i_links_count = 2;
     new_inode->i_blocks = 2;
-    // the following are trivial staff
-    new_inode->i_gid = 0;
-    new_inode->i_uid = 0;
-    new_inode->osd1 = 0;
-    new_inode->i_generation = 0;
-    new_inode->i_file_acl = 0;    /* File ACL */
-    new_inode->i_dir_acl = 0;     /* Directory ACL */
-    new_inode->i_faddr = 0;
+    init_inode(new_inode);
 
     new_inode->i_block[0] = (unsigned int) free_block_idx;
     int i;
@@ -45,7 +32,7 @@ int main(int argc, char **argv) {
 
     //set first dir_entry to itself
     struct ext2_dir_entry *new_dir_entry = (struct ext2_dir_entry *)(disk + (free_block_idx * EXT2_BLOCK_SIZE));
-    new_dir_entry->inode = free_inode_idx;
+    new_dir_entry->inode = (unsigned int) free_inode_idx;
     new_dir_entry->rec_len = 12;
     new_dir_entry->name_len = 1;
     new_dir_entry->file_type = EXT2_FT_DIR;
@@ -64,6 +51,13 @@ int main(int argc, char **argv) {
     set_bitmap(0, free_inode_idx, 1);
     set_bitmap(1, free_block_idx, 1);
 
-    print_bm();
+    // modify super block
+    sb->s_free_inodes_count--;
+    sb->s_free_blocks_count--;
+
+    // modify group descriptor table
+    gdt->bg_free_inodes_count--;
+    gdt->bg_free_blocks_count--;
+    gdt->bg_used_dirs_count++;
 
 }
