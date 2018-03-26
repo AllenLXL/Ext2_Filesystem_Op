@@ -10,29 +10,32 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Usage: %s <image file name> <abs path of ext2 file sys>", argv[0]);
         exit(1);
     }
+
+    validate_path(argv[2]);
+
     init_ptrs(argv[1]);
-    char* good_path = convert_path(argv[2]);
-    construct_ll(good_path, first_front);
+
+    construct_ll(argv[2], &first_front);
 
     // this idx starts from 1
     int free_inode_idx = find_free_inode() + 1;
     int free_block_idx = find_free_block() + 1;
 
     struct ext2_inode* new_inode = &inode_table[free_inode_idx - 1];
-
+    init_inode(new_inode);
     new_inode->i_mode = EXT2_S_IFDIR;
     new_inode->i_size = EXT2_BLOCK_SIZE;
-    new_inode->i_links_count = 2;
-    new_inode->i_blocks = 2;
-    init_inode(new_inode);
+    new_inode->i_links_count += 2;
+    new_inode->i_blocks += 2;
 
     new_inode->i_block[0] = (unsigned int) free_block_idx - 1;
-    int i;
-    for(i = 1; i < 15; i++) {
-        new_inode->i_block[i] = 0;
-    }
 
-    unsigned int parent_idx = modify_parent_block() - 1;
+    char* target_name = get_last_name(first_front);
+    struct ext2_dir_entry* dir_entry = get_parent_dir_block(first_front);
+    unsigned int inode_idx = dir_entry->inode-1;
+    check_existence(dir_entry, target_name, EXT2_FT_DIR);
+    add_parent_block(dir_entry, target_name, EXT2_FT_DIR);
+
 
     //set first dir_entry to itself
     struct ext2_dir_entry *self_dir = (void*)disk + ((free_block_idx-1) * EXT2_BLOCK_SIZE);
@@ -44,12 +47,12 @@ int main(int argc, char **argv) {
 
     //set another dir_entry to = parent
     struct ext2_dir_entry* parent_dir = (void*)self_dir + self_dir->rec_len;
-    parent_dir->inode = ((struct ext2_dir_entry *)(disk + (inode_table[parent_idx].i_block[0] * EXT2_BLOCK_SIZE)))->inode;
+    parent_dir->inode = ((struct ext2_dir_entry *)(disk + (inode_table[inode_idx].i_block[0] * EXT2_BLOCK_SIZE)))->inode;
     parent_dir->rec_len = EXT2_BLOCK_SIZE - 12;
     parent_dir->name_len = 2;
     parent_dir->file_type = EXT2_FT_DIR;
     strncpy(parent_dir->name, "..", 2);
-    inode_table[parent_idx].i_links_count++;
+    inode_table[inode_idx].i_links_count++;
 
     print_dir_block(self_dir);
 

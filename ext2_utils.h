@@ -40,12 +40,13 @@ ll* first_front;
 ll* second_front;
 
 
+void validate_path(char* path);
 
-int init_ptrs(char* img_file);
+void init_ptrs(char* img_file);
 int find_free_inode();
 int find_free_block();
 void set_bitmap(int bm_idx ,int idx, int mode);
-void construct_ll(char* path, ll* link_list);
+void construct_ll(char* path, ll** link_list);
 void init_inode(struct ext2_inode* new_inode);
 
 
@@ -59,7 +60,11 @@ struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head);
 
 void check_existence(struct ext2_dir_entry* first_dir_ent, char* name, int type);
 
+char* get_last_name(ll* ll_head);
 
+char* get_sec_last_name(ll* ll_head, int ll_lenth);
+
+void add_parent_block(struct ext2_dir_entry* dir_entry, char* name, int type);
 #endif //A4_EXT2_UTILS_H
 
 

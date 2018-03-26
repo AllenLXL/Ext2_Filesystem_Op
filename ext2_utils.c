@@ -56,13 +56,90 @@ void print_dir_block(struct ext2_dir_entry* first_row){
     }
     printf("print finished ================================\n");
 }
+
+void print_inode(){
+    printf("Inodes:\n");
+    struct ext2_inode *inode = inode_table;
+
+    for (int i = EXT2_ROOT_INO - 1; i < sb->s_inodes_count; i++) {
+        if (i == EXT2_ROOT_INO - 1 || i >= EXT2_GOOD_OLD_FIRST_INO) {
+
+            if (inode[i].i_size != 0) {
+                if (inode[i].i_mode & EXT2_S_IFREG) { // regular
+                    printf("[%d] type: f size: %d links: %d blocks: %d\n", i + 1, inode[i].i_size,
+                           inode[i].i_links_count, inode[i].i_blocks);
+                    printf("[%d] Blocks: ", i + 1);
+                    if (inode[i].i_blocks / 2 < 12){
+                        for (int j = 0; j < (inode[i].i_blocks / 2); j++) {
+                            if (j!=(inode[i].i_blocks / 2)-1){
+                                printf("%d ", inode[i].i_block[j]);
+                            } else{
+                                printf("%d", inode[i].i_block[j]);
+                            }
+                        }
+                        printf("\n");
+                    } else {
+                        for (int j = 0; j < 13; j++) {
+                            if (j!=(inode[i].i_blocks / 2)-1){
+                                printf("%d ", inode[i].i_block[j]);
+                            } else{
+                                printf("%d", inode[i].i_block[j]);
+                            }
+                        }
+                        int* location = (int *)(disk + EXT2_BLOCK_SIZE*inode[i].i_block[12]);
+                        for (int k = 0; k < (inode[i].i_blocks / 2)-12-1; k++) {
+                            if (k!=(inode[i].i_blocks / 2)-12-1-1){
+                                printf("%d ", location[k]);
+                            } else{
+                                printf("%d", location[k]);
+                            }
+                        }
+                        printf("\n");
+                    }
+                }
+                if (inode[i].i_mode & EXT2_S_IFDIR) { // directory
+                    printf("[%d] type: d size: %d links: %d blocks: %d\n", i + 1, inode[i].i_size,
+                           inode[i].i_links_count, inode[i].i_blocks);
+                    printf("[%d] Blocks: ", i + 1);
+                    if (inode[i].i_blocks / 2 < 12){
+                        for (int j = 0; j < (inode[i].i_blocks / 2); j++) {
+                            if (j!=(inode[i].i_blocks / 2)-1){
+                                printf("%d ", inode[i].i_block[j]);
+                            } else{
+                                printf("%d", inode[i].i_block[j]);
+                            }
+                        }
+                        printf("\n");
+                    } else {
+                        for (int j = 0; j < 13; j++) {
+                            if (j!=(inode[i].i_blocks / 2)-1){
+                                printf("%d ", inode[i].i_block[j]);
+                            } else{
+                                printf("%d", inode[i].i_block[j]);
+                            }
+                        }
+                        int* location = (int *)(disk + EXT2_BLOCK_SIZE*inode[i].i_block[12]);
+                        for (int k = 0; k < (inode[i].i_blocks / 2)-12-1; k++) {
+                            if (k!=(inode[i].i_blocks / 2)-12-1-1){
+                                printf("%d ", location[k]);
+                            } else{
+                                printf("%d", location[k]);
+                            }
+                        }
+                        printf("\n");
+                    }
+                }
+            }
+        }
+    }
+}
 //TODO====================================================
 
 /*
  * This function is for initialize all necessary pointer for every operations.
  * On success return image file descriptor, o.w. exit.
  */
-int init_ptrs(char* img_file){
+void init_ptrs(char* img_file){
     int fd = open(img_file, O_RDWR);
 
     if (fd < 0){
@@ -80,8 +157,6 @@ int init_ptrs(char* img_file){
     block_bm = disk + (EXT2_BLOCK_SIZE * gdt->bg_block_bitmap);
     inode_bm = disk + (EXT2_BLOCK_SIZE * gdt->bg_inode_bitmap);
     inode_table = (struct ext2_inode *)(disk + EXT2_BLOCK_SIZE * gdt->bg_inode_table);
-
-    return fd;
 }
 /*
  * This function is used for finding a free inode in inode bitmap.
@@ -153,59 +228,11 @@ void set_bitmap(int bm_idx ,int idx, int mode){
     }
 }
 
-/*
- * This helper function works for converting an abs path to
- * some normal staff. Path is guaranteed to be null terminated.
- * make sure a slash in front and no slash in end.
- */
-char* convert_path(char* path){
-    int length = 0;
-    while (path[length] != '\0'){
-        length++;
-    }
 
-    int front_slash = 0;
-    if (path[0] == '/'){
-        front_slash = 1;
-    }
+void construct_ll(char* path, ll** link_list){
+    *link_list = NULL;
 
-    int end_slash = 0;
-    if (path[length-1] == '/'){
-        end_slash = 1;
-    }
-    int new_length = length;
-    if (!front_slash){
-        new_length++;
-    }
-
-    if (!end_slash){
-        new_length++;
-    }
-
-    char* good_path = malloc(new_length*sizeof(char));
-    memset(good_path, '\0', new_length);
-    if (!front_slash){
-        good_path[0] = '/';
-        strncpy(&good_path[1], path, new_length);
-        if (end_slash){
-            good_path[new_length-1] = '\0';
-        }
-    } else{
-        strncpy(good_path, path, new_length);
-        if (end_slash){
-            good_path[new_length-1] = '\0';
-        }
-    }
-    return good_path;
-}
-
-void construct_ll(char* path, ll* link_list){
-    link_list = NULL;
-
-    int length = 0;
-    while (path[length] != '\0'){
-        length++;
-    }
+    int length = (int) strlen(path);
     int dir_length = 0;
     for(int i = length - 1; i >= 1; i--){
         if (path[i] != '/'){
@@ -213,17 +240,20 @@ void construct_ll(char* path, ll* link_list){
         } else{
             dir_length = 0;
         }
-        if (path[i]!= '/' && path[i-1] == '/'){
+        if ((path[i]!= '/' && path[i-1] == '/')||(i==1 && dir_length!=0 && path[0]!='/')){
+            if (i==1 && dir_length!=0 && path[0]!='/'){
+                dir_length++;
+                i--;
+            }
             ll* ll_node = malloc(sizeof(ll));
             ll_node->name = malloc((dir_length+1)* sizeof(char));
             memset(ll_node->name, '\0', dir_length+1);
             memcpy(ll_node->name, &path[i], dir_length);
-            ll_node->next = link_list;
-            link_list = ll_node;
+            ll_node->next = (*link_list);
+            (*link_list) = ll_node;
             ll_node->name_len = dir_length;
         }
     }
-    free(path);
 }
 
 int get_ll_length(ll* head){
@@ -243,12 +273,11 @@ int get_ll_length(ll* head){
  * On success return 1. o.w. exit.
  * If valid, we remove last / if exist.
  */
-int validate_abs_path(char* path){
+void validate_path(char* path){
     if (path[0]!='/'){
         fprintf(stderr, "invalid abs path");
-        exit(1);
+        exit(ENOENT);
     }
-    return 1;
 }
 
 /*
@@ -406,6 +435,55 @@ struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head){
     return dir_entry;
 }
 
+void add_parent_block(struct ext2_dir_entry* dir_entry, char* name, int type){
+
+    unsigned int inode_idx = dir_entry->inode;
+    struct ext2_inode* inode = &inode_table[inode_idx-1];
+    struct ext2_dir_entry * new_dir;
+
+    struct ext2_dir_entry* need_deleted = dir_entry;
+
+    int k =0;
+    while (k < EXT2_BLOCK_SIZE) {
+        if (k+dir_entry->rec_len == EXT2_BLOCK_SIZE){
+            int begin = k;
+            int row_len = 8 + dir_entry->name_len;
+            k+=row_len;
+            while ((row_len)%4!=0){
+                row_len++;
+                k++;
+            }
+            dir_entry->rec_len = (unsigned short) (k - begin);
+            break;
+        }
+        k += dir_entry->rec_len;
+        dir_entry = (void*)(dir_entry) + dir_entry -> rec_len;
+    }
+    int last_padding = EXT2_BLOCK_SIZE - k - 8 - dir_entry->name_len;
+
+    if (last_padding < (strlen(name)+8)){
+        if (sb->s_free_blocks_count < 1) {
+            fprintf(stderr, "No block available");
+            exit(1);
+        }
+        inode->i_blocks += 2;
+        int free_block_idx = find_free_block() + 1;
+        inode->i_block[1]= (unsigned int) free_block_idx;
+        set_bitmap(0, free_block_idx, 1);
+        sb->s_free_blocks_count--;
+        gdt->bg_free_inodes_count--;
+        new_dir = (struct ext2_dir_entry *)(disk + inode->i_block[1]*EXT2_BLOCK_SIZE);
+        k=0;
+    } else{
+        new_dir = (struct ext2_dir_entry *)(disk + inode->i_block[0]*EXT2_BLOCK_SIZE+k);
+    }
+    new_dir->name_len= (unsigned char) strlen(name);
+    strncpy(new_dir->name, name, strlen(name));
+    new_dir->rec_len= (unsigned short) (EXT2_BLOCK_SIZE - k);
+    new_dir->inode= inode_idx;
+    new_dir->file_type= (unsigned char) type;
+}
+
 
 void init_inode(struct ext2_inode* new_inode){
     // the following are trivial staff
@@ -416,11 +494,16 @@ void init_inode(struct ext2_inode* new_inode){
     new_inode->i_file_acl = 0;    /* File ACL */
     new_inode->i_dir_acl = 0;     /* Directory ACL */
     new_inode->i_faddr = 0;
+    // other necessary attributes
+    new_inode->i_blocks=0;
+    new_inode->i_links_count=0;
+    for(int i =0;i<15;i++){
+        new_inode->i_block[i]=0;
+    }
 }
 
 /*
  * name is file / dir name.
- * type 2 - dir; type 1 - reg file.
  */
 void check_existence(struct ext2_dir_entry* first_dir_ent , char* name, int type){
     int k = 0;
@@ -432,4 +515,28 @@ void check_existence(struct ext2_dir_entry* first_dir_ent , char* name, int type
         k += first_dir_ent->rec_len;
         first_dir_ent = (void*)(first_dir_ent) + first_dir_ent -> rec_len;
     }
+}
+
+// TODO remember to free result
+char* get_last_name(ll* ll_head){
+    ll* loop = ll_head;
+    while (loop->next!=NULL){
+        loop=loop->next;
+    }
+    char* result = malloc((loop->name_len+1)* sizeof(char));
+    memset(result, '\0', (loop->name_len+1));
+    strncpy(result, loop->name, (size_t) loop->name_len);
+    return result;
+}
+
+// TODO remember to free result
+char* get_sec_last_name(ll* ll_head, int ll_length){
+    ll* loop = ll_head;
+    for (int i = 0; i < ll_length - 1; i++){
+        loop=loop->next;
+    }
+    char* result = malloc((loop->name_len+1)* sizeof(char));
+    memset(result, '\0', (loop->name_len+1));
+    strncmp(result, loop->name, (size_t) loop->name_len);
+    return result;
 }

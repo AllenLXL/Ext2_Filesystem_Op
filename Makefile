@@ -1,18 +1,19 @@
 CFlag = -Wall -g -std=gnu99
 
-all : ext2_mkdir
+all : ext2_mkdir ext2_cp
 
-ext2_mkdir : ext2_mkdir.o ext2_utils.o
+ext2_cp: ext2_cp.o ext2_utils.o
+	gcc $(CFlag) -o $@ $^
+
+ext2_mkdir: ext2_mkdir.o ext2_utils.o
 	gcc $(CFlag) -o $@ $^
 
 %.o: %.c ext2_utils.h ext2.h
 	gcc $(CFlag) -c $<
 
 clean :
-	rm *.o mkdir
+	rm *.o ext2_mkdir ext2_cp
 
-reset:
+reset :
 	cp clean_images/* images/
 
-test:
-    scp lixiaol8@teach.cs.utoronto.ca:~/a4/self-tester/runs/case* test_result

@@ -87,32 +87,62 @@ int main(int argc, char **argv) {
                     printf("[%d] Blocks: ", i + 1);
                     if (inode[i].i_blocks / 2 < 12){
                         for (int j = 0; j < (inode[i].i_blocks / 2); j++) {
-                            printf("%d\n", inode[i].i_block[j]);
+                            if (j!=(inode[i].i_blocks / 2)-1){
+                                printf("%d ", inode[i].i_block[j]);
+                            } else{
+                                printf("%d", inode[i].i_block[j]);
+                            }
                         }
+                        printf("\n");
                     } else {
-                        for (int j = 0; j < 12; j++) {
-                            printf("%d\n", inode[i].i_block[j]);
+                        for (int j = 0; j < 13; j++) {
+                            if (j!=(inode[i].i_blocks / 2)-1){
+                                printf("%d ", inode[i].i_block[j]);
+                            } else{
+                                printf("%d", inode[i].i_block[j]);
+                            }
                         }
                         int* location = (int *)(disk + EXT2_BLOCK_SIZE*inode[i].i_block[12]);
                         for (int k = 0; k < (inode[i].i_blocks / 2)-12-1; k++) {
-                            printf("%d\n", location[k]);
+                            if (k!=(inode[i].i_blocks / 2)-12-1-1){
+                                printf("%d ", location[k]);
+                            } else{
+                                printf("%d", location[k]);
+                            }
                         }
+                        printf("\n");
                     }
                 }
-
                 if (inode[i].i_mode & EXT2_S_IFDIR) { // directory
                     printf("[%d] type: d size: %d links: %d blocks: %d\n", i + 1, inode[i].i_size,
                            inode[i].i_links_count, inode[i].i_blocks);
                     printf("[%d] Blocks: ", i + 1);
                     if (inode[i].i_blocks / 2 < 12){
                         for (int j = 0; j < (inode[i].i_blocks / 2); j++) {
-                            printf("%d\n", inode[i].i_block[j]);
+                            if (j!=(inode[i].i_blocks / 2)-1){
+                                printf("%d ", inode[i].i_block[j]);
+                            } else{
+                                printf("%d", inode[i].i_block[j]);
+                            }
                         }
+                        printf("\n");
                     } else {
+                        for (int j = 0; j < 13; j++) {
+                            if (j!=(inode[i].i_blocks / 2)-1){
+                                printf("%d ", inode[i].i_block[j]);
+                            } else{
+                                printf("%d", inode[i].i_block[j]);
+                            }
+                        }
                         int* location = (int *)(disk + EXT2_BLOCK_SIZE*inode[i].i_block[12]);
                         for (int k = 0; k < (inode[i].i_blocks / 2)-12-1; k++) {
-                            printf("%d\n", location[k]);
+                            if (k!=(inode[i].i_blocks / 2)-12-1-1){
+                                printf("%d ", location[k]);
+                            } else{
+                                printf("%d", location[k]);
+                            }
                         }
+                        printf("\n");
                     }
                 }
             }
