@@ -29,31 +29,37 @@ void print_bm();
 void print_dir_block(struct ext2_dir_entry* first_row);
 
 
-
-int init_ptrs(char* img_file);
-
-int find_free_inode();
-
-int find_free_block();
-
-void set_bitmap(int bm_idx ,int idx, int mode);
-
-char* convert_path(char* path);
-char* get_new_dir_name(char* path);
-
-void construct_ll(char* path);
-unsigned int modify_parent_block();
-
 typedef struct linked_list{
     struct linked_list* next;
     char* name;
     int name_len;
 } ll;
 
-ll* front;
-int ll_length;
+ll* first_front;
 
+ll* second_front;
+
+
+
+int init_ptrs(char* img_file);
+int find_free_inode();
+int find_free_block();
+void set_bitmap(int bm_idx ,int idx, int mode);
+void construct_ll(char* path, ll* link_list);
 void init_inode(struct ext2_inode* new_inode);
+
+
+char* convert_path(char* path);
+char* get_new_dir_name(char* path);
+
+
+unsigned int modify_parent_block();
+
+struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head);
+
+void check_existence(struct ext2_dir_entry* first_dir_ent, char* name, int type);
+
+
 #endif //A4_EXT2_UTILS_H
 
 

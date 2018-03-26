@@ -52,7 +52,7 @@ void print_dir_block(struct ext2_dir_entry* first_row){
                    first_row->inode, first_row->rec_len, first_row->name_len,first_row->name_len,first_row->name);
         }
         k += first_row->rec_len;
-        first_row = (void*)(first_row) + first_row -> rec_len;
+        first_row = (void*)(first_row) + first_row->rec_len;
     }
     printf("print finished ================================\n");
 }
@@ -199,10 +199,9 @@ char* convert_path(char* path){
     return good_path;
 }
 
-void construct_ll(char* path){
-    front = NULL;
+void construct_ll(char* path, ll* link_list){
+    link_list = NULL;
 
-    ll_length = 0;
     int length = 0;
     while (path[length] != '\0'){
         length++;
@@ -216,15 +215,25 @@ void construct_ll(char* path){
         }
         if (path[i]!= '/' && path[i-1] == '/'){
             ll* ll_node = malloc(sizeof(ll));
-            ll_node->name = malloc(dir_length* sizeof(char));
+            ll_node->name = malloc((dir_length+1)* sizeof(char));
+            memset(ll_node->name, '\0', dir_length+1);
             memcpy(ll_node->name, &path[i], dir_length);
-            ll_node->next = front;
-            front = ll_node;
+            ll_node->next = link_list;
+            link_list = ll_node;
             ll_node->name_len = dir_length;
-            ll_length++;
         }
     }
     free(path);
+}
+
+int get_ll_length(ll* head){
+    ll* temp = head;
+    int result = 0;
+    while(temp != NULL){
+        result++;
+        temp=temp->next;
+    }
+    return result;
 }
 
 
@@ -286,7 +295,9 @@ unsigned int modify_parent_block(){
     struct ext2_inode* current = root;
     struct ext2_dir_entry * dir_entry = (struct ext2_dir_entry *)(disk + current->i_block[0]*EXT2_BLOCK_SIZE);
 
-    ll* current_node = front;
+    ll* current_node = first_front;
+
+    int ll_length = get_ll_length(first_front);
 
     int k = 0;
     for (int i = 0; i < ll_length - 1; i++){
@@ -315,7 +326,7 @@ unsigned int modify_parent_block(){
             dir_entry = (void*)(dir_entry) + dir_entry -> rec_len;
         }
     }
-    print_dir_block(dir_entry);
+//    print_dir_block(dir_entry);
 
     unsigned int result = dir_entry->inode;
 
@@ -335,7 +346,6 @@ unsigned int modify_parent_block(){
         }
         k += dir_entry->rec_len;
         dir_entry = (void*)(dir_entry) + dir_entry -> rec_len;
-
     }
 
     struct ext2_dir_entry * new_dir = (struct ext2_dir_entry *)(disk + current->i_block[0]*EXT2_BLOCK_SIZE+k);
@@ -357,6 +367,46 @@ unsigned int modify_parent_block(){
     return result;
 }
 
+struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head){
+    struct ext2_inode* root = &inode_table[EXT2_ROOT_INO - 1];
+    struct ext2_inode* current = root;
+    struct ext2_dir_entry * dir_entry = (struct ext2_dir_entry *)(disk + current->i_block[0]*EXT2_BLOCK_SIZE);
+
+    ll* current_node = link_list_head;
+
+    int ll_length = get_ll_length(first_front);
+
+    int k = 0;
+    for (int i = 0; i < ll_length - 1; i++){
+
+        current_node = current_node->next;
+        while (k < EXT2_BLOCK_SIZE) {
+            if (EXT2_FT_REG_FILE == dir_entry->file_type) {
+                k += dir_entry->rec_len;
+                dir_entry = (void*)(dir_entry) + dir_entry -> rec_len;
+            }
+            else if (EXT2_FT_DIR == dir_entry->file_type) {
+                if (strncmp(dir_entry->name, current_node->name, (size_t) current_node->name_len) == 0){
+                    current = &inode_table[dir_entry->inode - 1];
+                    dir_entry = (struct ext2_dir_entry *)(disk + current->i_block[0]*EXT2_BLOCK_SIZE);
+                    k = 0;
+                    current_node = current_node->next;
+                    if (i == ll_length-1){
+                        break;
+                    }
+                } else{
+                    fprintf(stderr, "directory not exist");
+                    exit(ENOENT);
+                }
+            }
+            k += dir_entry->rec_len;
+            dir_entry = (void*)(dir_entry) + dir_entry -> rec_len;
+        }
+    }
+    return dir_entry;
+}
+
+
 void init_inode(struct ext2_inode* new_inode){
     // the following are trivial staff
     new_inode->i_gid = 0;
@@ -366,4 +416,20 @@ void init_inode(struct ext2_inode* new_inode){
     new_inode->i_file_acl = 0;    /* File ACL */
     new_inode->i_dir_acl = 0;     /* Directory ACL */
     new_inode->i_faddr = 0;
+}
+
+/*
+ * name is file / dir name.
+ * type 2 - dir; type 1 - reg file.
+ */
+void check_existence(struct ext2_dir_entry* first_dir_ent , char* name, int type){
+    int k = 0;
+    while (k < EXT2_BLOCK_SIZE) {
+        if (type == first_dir_ent->file_type && (strncmp(name, (const char *) (first_dir_ent + 8), first_dir_ent->name_len)==0)) {
+            fprintf(stderr, "File or directory already exists.");
+            exit(EEXIST);
+        }
+        k += first_dir_ent->rec_len;
+        first_dir_ent = (void*)(first_dir_ent) + first_dir_ent -> rec_len;
+    }
 }

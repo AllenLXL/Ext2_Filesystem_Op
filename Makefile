@@ -16,4 +16,3 @@ reset:
 
 test:
     scp lixiaol8@teach.cs.utoronto.ca:~/a4/self-tester/runs/case* test_result
-
