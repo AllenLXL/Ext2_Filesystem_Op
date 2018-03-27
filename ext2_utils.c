@@ -396,25 +396,19 @@ unsigned int modify_parent_block(){
     return result;
 }
 
-struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head){
-    struct ext2_inode* root = &inode_table[EXT2_ROOT_INO - 1];
-    struct ext2_inode* current = root;
+struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head, int type){
+    struct ext2_inode* current = &inode_table[EXT2_ROOT_INO - 1];
     struct ext2_dir_entry * dir_entry = (struct ext2_dir_entry *)(disk + current->i_block[0]*EXT2_BLOCK_SIZE);
 
     ll* current_node = link_list_head;
 
-    int ll_length = get_ll_length(first_front);
+    int ll_length = get_ll_length(current_node);
 
     int k = 0;
     for (int i = 0; i < ll_length - 1; i++){
 
-        current_node = current_node->next;
         while (k < EXT2_BLOCK_SIZE) {
-            if (EXT2_FT_REG_FILE == dir_entry->file_type) {
-                k += dir_entry->rec_len;
-                dir_entry = (void*)(dir_entry) + dir_entry -> rec_len;
-            }
-            else if (EXT2_FT_DIR == dir_entry->file_type) {
+            if (type == dir_entry->file_type) {
                 if (strncmp(dir_entry->name, current_node->name, (size_t) current_node->name_len) == 0){
                     current = &inode_table[dir_entry->inode - 1];
                     dir_entry = (struct ext2_dir_entry *)(disk + current->i_block[0]*EXT2_BLOCK_SIZE);
@@ -423,25 +417,22 @@ struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head){
                     if (i == ll_length-1){
                         break;
                     }
-                } else{
-                    fprintf(stderr, "directory not exist");
-                    exit(ENOENT);
                 }
             }
             k += dir_entry->rec_len;
             dir_entry = (void*)(dir_entry) + dir_entry -> rec_len;
         }
     }
+    if (k==EXT2_BLOCK_SIZE){
+        fprintf(stderr, "directory not exist");
+        exit(ENOENT);
+    }
     return dir_entry;
 }
 
-void add_parent_block(struct ext2_dir_entry* dir_entry, char* name, int type){
-
-    unsigned int inode_idx = dir_entry->inode;
-    struct ext2_inode* inode = &inode_table[inode_idx-1];
+struct ext2_dir_entry* add_parent_block(struct ext2_dir_entry* dir_entry, char* name, int type){
+    struct ext2_inode* inode = &inode_table[dir_entry->inode-1];
     struct ext2_dir_entry * new_dir;
-
-    struct ext2_dir_entry* need_deleted = dir_entry;
 
     int k =0;
     while (k < EXT2_BLOCK_SIZE) {
@@ -467,6 +458,7 @@ void add_parent_block(struct ext2_dir_entry* dir_entry, char* name, int type){
             exit(1);
         }
         inode->i_blocks += 2;
+        inode->i_size+=EXT2_BLOCK_SIZE;
         int free_block_idx = find_free_block() + 1;
         inode->i_block[1]= (unsigned int) free_block_idx;
         set_bitmap(0, free_block_idx, 1);
@@ -480,8 +472,8 @@ void add_parent_block(struct ext2_dir_entry* dir_entry, char* name, int type){
     new_dir->name_len= (unsigned char) strlen(name);
     strncpy(new_dir->name, name, strlen(name));
     new_dir->rec_len= (unsigned short) (EXT2_BLOCK_SIZE - k);
-    new_dir->inode= inode_idx;
     new_dir->file_type= (unsigned char) type;
+    return new_dir;
 }
 
 
@@ -508,7 +500,7 @@ void init_inode(struct ext2_inode* new_inode){
 void check_existence(struct ext2_dir_entry* first_dir_ent , char* name, int type){
     int k = 0;
     while (k < EXT2_BLOCK_SIZE) {
-        if (type == first_dir_ent->file_type && (strncmp(name, (const char *) (first_dir_ent + 8), first_dir_ent->name_len)==0)) {
+        if (type == first_dir_ent->file_type && (strncmp(name, first_dir_ent->name, first_dir_ent->name_len)==0)) {
             fprintf(stderr, "File or directory already exists.");
             exit(EEXIST);
         }
@@ -537,6 +529,6 @@ char* get_sec_last_name(ll* ll_head, int ll_length){
     }
     char* result = malloc((loop->name_len+1)* sizeof(char));
     memset(result, '\0', (loop->name_len+1));
-    strncmp(result, loop->name, (size_t) loop->name_len);
+    strncpy(result, loop->name, (size_t) loop->name_len);
     return result;
 }

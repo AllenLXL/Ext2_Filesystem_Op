@@ -27,6 +27,7 @@ struct ext2_inode *inode_table;
 
 void print_bm();
 void print_dir_block(struct ext2_dir_entry* first_row);
+void print_inode();
 
 
 typedef struct linked_list{
@@ -56,7 +57,7 @@ char* get_new_dir_name(char* path);
 
 unsigned int modify_parent_block();
 
-struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head);
+struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head, int type);
 
 void check_existence(struct ext2_dir_entry* first_dir_ent, char* name, int type);
 
@@ -64,7 +65,7 @@ char* get_last_name(ll* ll_head);
 
 char* get_sec_last_name(ll* ll_head, int ll_lenth);
 
-void add_parent_block(struct ext2_dir_entry* dir_entry, char* name, int type);
+struct ext2_dir_entry* add_parent_block(struct ext2_dir_entry* dir_entry, char* name, int type);
 #endif //A4_EXT2_UTILS_H
 
 

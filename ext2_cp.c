@@ -28,9 +28,7 @@ int main(int argc, char **argv) {
 
     construct_ll(argv[3], &first_front);
 
-
-
-    FILE *source_fd = fopen(argv[2], "rb");
+    FILE *source_fd = fopen(argv[2], "r");
     // get source file size
     fseek(source_fd, 0L, SEEK_END);
     long source_size = ftell(source_fd);
@@ -52,10 +50,14 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
+    struct ext2_dir_entry* dir_entry = get_parent_dir_block(first_front, EXT2_FT_REG_FILE);
+    char* target_name = get_last_name(first_front);
+    check_existence(dir_entry, target_name, EXT2_FT_REG_FILE);
+
     // this idx starts from 1
     int free_inode_idx = find_free_inode() + 1;
     set_bitmap(0, free_inode_idx, 1);
-    sb->s_free_blocks_count--;
+    sb->s_free_inodes_count--;
     gdt->bg_free_inodes_count--;
 
     struct ext2_inode* new_inode = &inode_table[free_inode_idx - 1];
@@ -63,7 +65,6 @@ int main(int argc, char **argv) {
     new_inode->i_mode=EXT2_S_IFREG;
     new_inode->i_size= (unsigned int) source_size;
     new_inode->i_links_count = 1;
-    new_inode->i_blocks = (unsigned int) (2 * block_need);
 
     int free_block_idx;
 
@@ -71,7 +72,7 @@ int main(int argc, char **argv) {
         // this idx starts from 1
         free_block_idx = find_free_block() + 1;
         new_inode->i_block[i] = (unsigned int) free_block_idx;
-        memcpy(disk + EXT2_BLOCK_SIZE * (free_block_idx - 1), source_fd, source_size);
+        memcpy(disk + EXT2_BLOCK_SIZE * (free_block_idx), source_fd, source_size);
         source_size -= EXT2_BLOCK_SIZE;
         fseek(source_fd, EXT2_BLOCK_SIZE, SEEK_CUR);
 
@@ -99,9 +100,10 @@ int main(int argc, char **argv) {
             new_inode->i_blocks+=2;
         }
     }
-    struct ext2_dir_entry* dir_entry = get_parent_dir_block(first_front);
-    char* target_name = get_last_name(second_front);
-    check_existence(dir_entry, target_name, 1);
+
+    print_dir_block(dir_entry);
+
     add_parent_block(dir_entry, target_name, EXT2_FT_REG_FILE);
+    dir_entry->inode= (unsigned int) free_inode_idx;
 
 }
