@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    struct ext2_dir_entry* dir_entry = get_parent_dir_block(first_front, EXT2_FT_REG_FILE);
+    struct ext2_dir_entry* dir_entry = get_parent_dir_block(first_front);
     char* target_name = get_last_name(first_front);
     check_existence(dir_entry, target_name, EXT2_FT_REG_FILE);
 

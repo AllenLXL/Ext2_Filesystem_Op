@@ -396,7 +396,7 @@ unsigned int modify_parent_block(){
     return result;
 }
 
-struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head, int type){
+struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head){
     struct ext2_inode* current = &inode_table[EXT2_ROOT_INO - 1];
     struct ext2_dir_entry * dir_entry = (struct ext2_dir_entry *)(disk + current->i_block[0]*EXT2_BLOCK_SIZE);
 
@@ -405,29 +405,47 @@ struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head, int type){
     int ll_length = get_ll_length(current_node);
 
     int k = 0;
+    int j=0;
     for (int i = 0; i < ll_length - 1; i++){
-
-        while (k < EXT2_BLOCK_SIZE) {
-            if (type == dir_entry->file_type) {
-                if (strncmp(dir_entry->name, current_node->name, (size_t) current_node->name_len) == 0){
+        while (current->i_block[j]!=0){
+            while (k < EXT2_BLOCK_SIZE) {
+                if ((strncmp(dir_entry->name, current_node->name, (size_t) current_node->name_len) == 0) && dir_entry->file_type==EXT2_FT_DIR) {
                     current = &inode_table[dir_entry->inode - 1];
                     dir_entry = (struct ext2_dir_entry *)(disk + current->i_block[0]*EXT2_BLOCK_SIZE);
-                    k = 0;
-                    current_node = current_node->next;
-                    if (i == ll_length-1){
-                        break;
+                    if (i==ll_length-2){
+                        return dir_entry;
                     }
                 }
+                k += dir_entry->rec_len;
+                dir_entry = (void*)(dir_entry) + dir_entry -> rec_len;
             }
-            k += dir_entry->rec_len;
-            dir_entry = (void*)(dir_entry) + dir_entry -> rec_len;
+            j++;
+            k=0;
         }
+
     }
-    if (k==EXT2_BLOCK_SIZE){
-        fprintf(stderr, "directory not exist");
-        exit(ENOENT);
+    fprintf(stderr, "file or directory not exist\n");
+    exit(ENOENT);
+}
+
+struct ext2_dir_entry* get_dir_ent(struct ext2_dir_entry* loop_ent, char* name){
+    struct ext2_inode* parent_inode = &inode_table[loop_ent->inode - 1];
+
+    int k = 0;
+    int j=0;
+    while (parent_inode->i_block[j]!=0){
+        while (k < EXT2_BLOCK_SIZE) {
+            if ((strncmp(loop_ent->name, name, (size_t) loop_ent->name_len) == 0)) {
+                return loop_ent;
+            }
+            k += loop_ent->rec_len;
+            loop_ent = (void*)(loop_ent) + loop_ent -> rec_len;
+        }
+        j++;
+        k=0;
     }
-    return dir_entry;
+    fprintf(stderr, "file or directory not exist\n");
+    exit(ENOENT);
 }
 
 struct ext2_dir_entry* add_parent_block(struct ext2_dir_entry* dir_entry, char* name, int type){
@@ -508,6 +526,47 @@ void check_existence(struct ext2_dir_entry* first_dir_ent , char* name, int type
         first_dir_ent = (void*)(first_dir_ent) + first_dir_ent -> rec_len;
     }
 }
+
+//
+int check_type(struct ext2_dir_entry* first_dir_ent , char* name){
+    int k = 0;
+    struct ext2_inode* inode = &inode_table[first_dir_ent->inode-1];
+    int has_reg = 0;
+    int has_dir = 0;
+    for (int i=0; i < (inode->i_blocks/2); i++) {
+        while (k < EXT2_BLOCK_SIZE) {
+            if ((strncmp(name, first_dir_ent->name, first_dir_ent->name_len) == 0)) {
+                if (first_dir_ent->file_type==EXT2_FT_DIR){
+                    has_dir+=2;
+                } else{
+                    has_reg+=1;
+                }
+            }
+            k += first_dir_ent->rec_len;
+            first_dir_ent = (void *) (first_dir_ent) + first_dir_ent->rec_len;
+        }
+    }
+    return has_dir+has_reg;
+}
+
+//int get_inode_idx(struct ext2_dir_entry* first_dir_ent, char* name, int type){
+//    int k = 0;
+//    while (k < EXT2_BLOCK_SIZE) {
+//        if ((strncmp(name, first_dir_ent->name, first_dir_ent->name_len)==0)) {
+//            indicator++;
+//            result = first_dir_ent->file_type
+//        }
+//        k += first_dir_ent->rec_len;
+//        first_dir_ent = (void*)(first_dir_ent) + first_dir_ent -> rec_len;
+//    }
+//    if (result && indicator==1){
+//        return result;
+//    } else if (result && indicator==2){
+//        return 3;
+//    } else{
+//        return 0;
+//    }
+//}
 
 // TODO remember to free result
 char* get_last_name(ll* ll_head){

@@ -16,6 +16,12 @@ add_executable(ext2_mkdir
         ext2_utils.c
         ext2_utils.h
         )
+add_executable(ext2_ln
+        ext2.h
+        ext2_ln.c
+        ext2_utils.c
+        ext2_utils.h
+        )
 
 add_executable(readimage
         ext2.h

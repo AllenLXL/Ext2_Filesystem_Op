@@ -57,15 +57,21 @@ char* get_new_dir_name(char* path);
 
 unsigned int modify_parent_block();
 
-struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head, int type);
+struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head);
 
 void check_existence(struct ext2_dir_entry* first_dir_ent, char* name, int type);
 
+int get_ll_length(ll* head);
 char* get_last_name(ll* ll_head);
 
 char* get_sec_last_name(ll* ll_head, int ll_lenth);
 
 struct ext2_dir_entry* add_parent_block(struct ext2_dir_entry* dir_entry, char* name, int type);
+
+int check_type(struct ext2_dir_entry* first_dir_ent , char* name);
+
+int get_inode_idx(struct ext2_dir_entry* first_dir_ent, char* name, int type);
+struct ext2_dir_entry* get_dir_ent(struct ext2_dir_entry* par_fir_ent, char* name);
 #endif //A4_EXT2_UTILS_H
 
 

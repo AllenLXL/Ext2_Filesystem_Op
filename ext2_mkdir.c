@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
     construct_ll(argv[2], &first_front);
 
     char* target_name = get_last_name(first_front);
-    struct ext2_dir_entry* dir_entry = get_parent_dir_block(first_front, EXT2_FT_DIR);
+    struct ext2_dir_entry* dir_entry = get_parent_dir_block(first_front);
     check_existence(dir_entry, target_name, EXT2_FT_DIR);
 
     // this idx starts from 1
@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
     new_inode->i_links_count += 2;
     new_inode->i_blocks += 2;
 
-    new_inode->i_block[0] = (unsigned int) free_block_idx - 1;
+    new_inode->i_block[0] = (unsigned int) free_block_idx;
 
     unsigned int inode_idx = dir_entry->inode-1;
 
@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
     printf("=================================================\n");
 
     //set first dir_entry to itself
-    struct ext2_dir_entry *self_dir = (void*)disk + ((free_block_idx-1) * EXT2_BLOCK_SIZE);
+    struct ext2_dir_entry *self_dir = (void*)disk + ((free_block_idx) * EXT2_BLOCK_SIZE);
     self_dir->inode = (unsigned int) free_inode_idx;
     self_dir->rec_len = 12;
     self_dir->name_len = 1;
