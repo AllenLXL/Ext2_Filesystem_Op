@@ -31,10 +31,8 @@ int main(int argc, char **argv) {
     struct ext2_dir_entry* parent_dir_fir = get_parent_dir_block(first_front);
     struct ext2_dir_entry* parent_dir_sec = get_parent_dir_block(second_front);
 
-    struct ext2_dir_entry* fir_dir = get_dir_ent(parent_dir_fir, name_1);
-    struct ext2_dir_entry* sec_dir = get_dir_ent(parent_dir_sec, name_2);
 
-    if (check_type(parent_dir_fir, name_2)==1){
+    if (check_type(parent_dir_sec, name_2)!=0){
         printf("exist already\n");
         exit(EEXIST);
     }
@@ -63,7 +61,10 @@ int main(int argc, char **argv) {
 
         add_parent_block(parent_dir_fir, name_2, EXT2_FT_SYMLINK);
     } else{
-        add_parent_block(parent_dir_fir, name_2, EXT2_FT_REG_FILE);
+        add_parent_block(parent_dir_sec, name_2, EXT2_FT_REG_FILE);
+        struct ext2_dir_entry* link = get_dir_ent(parent_dir_fir, name_1);
+        struct ext2_dir_entry* new_add = get_dir_ent(parent_dir_sec, name_2);
+        new_add->inode = link->inode;
     }
 
 

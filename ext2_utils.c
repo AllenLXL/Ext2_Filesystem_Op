@@ -415,14 +415,21 @@ struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head){
                     if (i==ll_length-2){
                         return dir_entry;
                     }
+                    k=0;
+                    current_node=current_node->next;
+                    i++;
+                } else{
+                    k += dir_entry->rec_len;
+                    dir_entry = (void*)(dir_entry) + dir_entry -> rec_len;
                 }
-                k += dir_entry->rec_len;
-                dir_entry = (void*)(dir_entry) + dir_entry -> rec_len;
+
             }
             j++;
             k=0;
         }
-
+    }
+    if (ll_length==1){
+        return dir_entry;
     }
     fprintf(stderr, "file or directory not exist\n");
     exit(ENOENT);
@@ -541,6 +548,7 @@ int check_type(struct ext2_dir_entry* first_dir_ent , char* name){
                 } else{
                     has_reg+=1;
                 }
+                break;
             }
             k += first_dir_ent->rec_len;
             first_dir_ent = (void *) (first_dir_ent) + first_dir_ent->rec_len;
