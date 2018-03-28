@@ -52,21 +52,25 @@ int main(int argc, char **argv) {
         init_inode(new_inode);
 
         new_inode->i_mode=EXT2_S_IFLNK;
-        int path_len = (int) strlen(argv[3]);
+        int path_len = (int) strlen(argv[2]);
         new_inode->i_size= (unsigned int) path_len;
         new_inode->i_links_count = 1;
         int free_block_idx = find_free_block() + 1;
+        new_inode->i_blocks+=2;
+        new_inode->i_block[0]= (unsigned int) free_block_idx;
         set_bitmap(1, free_block_idx, 1);
-        memcpy(disk + EXT2_BLOCK_SIZE*free_block_idx, argv[3], path_len);
-
-        add_parent_block(parent_dir_fir, name_2, EXT2_FT_SYMLINK);
+        sb->s_free_blocks_count--;
+        gdt->bg_free_blocks_count--;
+        memcpy(disk + EXT2_BLOCK_SIZE*free_block_idx, argv[2], path_len);
+//        print_dir_block(parent_dir_sec);
+        struct ext2_dir_entry* new_add = add_parent_block(parent_dir_sec, name_2, EXT2_FT_SYMLINK);
+//        print_dir_block(new_add);
+        new_add->inode = (unsigned int) free_block_idx;
+        print_dir_block(parent_dir_sec);
     } else{
-        add_parent_block(parent_dir_sec, name_2, EXT2_FT_REG_FILE);
+        struct ext2_dir_entry* new_add = add_parent_block(parent_dir_sec, name_2, EXT2_FT_REG_FILE);
         struct ext2_dir_entry* link = get_dir_ent(parent_dir_fir, name_1);
-        struct ext2_dir_entry* new_add = get_dir_ent(parent_dir_sec, name_2);
         new_add->inode = link->inode;
     }
-
-
 
 }

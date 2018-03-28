@@ -51,6 +51,10 @@ void print_dir_block(struct ext2_dir_entry* first_row){
             printf("Inode: %d rec_len: %d name_len: %d type= d name=%.*s\n",
                    first_row->inode, first_row->rec_len, first_row->name_len,first_row->name_len,first_row->name);
         }
+        else if (EXT2_FT_SYMLINK == first_row->file_type) {
+            printf("Inode: %d rec_len: %d name_len: %d type= softlink name=%.*s\n",
+                   first_row->inode, first_row->rec_len, first_row->name_len, first_row->name_len, first_row->name);
+        }
         k += first_row->rec_len;
         first_row = (void*)(first_row) + first_row->rec_len;
     }
@@ -422,7 +426,6 @@ struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head){
                     k += dir_entry->rec_len;
                     dir_entry = (void*)(dir_entry) + dir_entry -> rec_len;
                 }
-
             }
             j++;
             k=0;
@@ -457,8 +460,9 @@ struct ext2_dir_entry* get_dir_ent(struct ext2_dir_entry* loop_ent, char* name){
 
 struct ext2_dir_entry* add_parent_block(struct ext2_dir_entry* dir_entry, char* name, int type){
     struct ext2_inode* inode = &inode_table[dir_entry->inode-1];
-    struct ext2_dir_entry * new_dir;
-
+    struct ext2_dir_entry* new_dir;
+//    print_dir_block(dir_entry);
+//    struct ext2_dir_entry * temp = dir_entry;
     int k =0;
     while (k < EXT2_BLOCK_SIZE) {
         if (k+dir_entry->rec_len == EXT2_BLOCK_SIZE){
@@ -511,6 +515,7 @@ void init_inode(struct ext2_inode* new_inode){
     new_inode->i_file_acl = 0;    /* File ACL */
     new_inode->i_dir_acl = 0;     /* Directory ACL */
     new_inode->i_faddr = 0;
+    new_inode->i_dtime=0; //TODO ???
     // other necessary attributes
     new_inode->i_blocks=0;
     new_inode->i_links_count=0;
