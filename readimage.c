@@ -16,7 +16,9 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Usage: %s <image file name>\n", argv[0]);
         exit(1);
     }
+    int fd = open(argv[1], O_RDWR);
 
+    disk = mmap(NULL, 128 * 1024, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     if(disk == MAP_FAILED) {
         perror("mmap");
         exit(1);
@@ -26,7 +28,6 @@ int main(int argc, char **argv) {
     // block group descriptor table pointer.
     struct ext2_group_desc *gdt = (struct ext2_group_desc *)(disk + 1024 * 2);
 
-    printf("s_log_block_size: %d\n", sb->s_log_block_size);
     printf("Inodes: %d\n", sb->s_inodes_count);
     printf("Blocks: %d\n", sb->s_blocks_count);
     printf("Block group:\n");

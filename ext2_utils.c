@@ -458,6 +458,7 @@ struct ext2_dir_entry* get_dir_ent(struct ext2_dir_entry* loop_ent, char* name){
     exit(ENOENT);
 }
 
+// return newly added dir_ent
 struct ext2_dir_entry* add_parent_block(struct ext2_dir_entry* dir_entry, char* name, int type){
     struct ext2_inode* inode = &inode_table[dir_entry->inode-1];
     struct ext2_dir_entry* new_dir;
@@ -559,6 +560,7 @@ void init_inode(struct ext2_inode* new_inode){
     for(int i =0;i<15;i++){
         new_inode->i_block[i]=0;
     }
+
 }
 
 /*

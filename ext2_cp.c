@@ -1,9 +1,4 @@
-//
-// Created by LiAllen on 2018-03-19.
-//
-
 #include "ext2_utils.h"
-
 
 int main(int argc, char **argv) {
     if(argc != 4) {
@@ -28,7 +23,8 @@ int main(int argc, char **argv) {
 
     construct_ll(argv[3], &first_front);
 
-    FILE *source_fd = fopen(argv[2], "r");
+    FILE *source_fd = fopen(argv[2], "rb");
+
     // get source file size
     fseek(source_fd, 0L, SEEK_END);
     long source_size = ftell(source_fd);
@@ -52,7 +48,7 @@ int main(int argc, char **argv) {
 
     struct ext2_dir_entry* dir_entry = get_parent_dir_block(first_front);
     char* target_name = get_last_name(first_front);
-    check_existence(dir_entry, target_name);
+    check_existence(dir_entry, target_name);//TODO CHANGE THIS CHECK
 
     // this idx starts from 1
     int free_inode_idx = find_free_inode() + 1;
@@ -67,14 +63,18 @@ int main(int argc, char **argv) {
     new_inode->i_links_count = 1;
 
     int free_block_idx;
-
     for (int i=0; i<12&&i<block_need; i++) {
         // this idx starts from 1
         free_block_idx = find_free_block() + 1;
         new_inode->i_block[i] = (unsigned int) free_block_idx;
-        memcpy(disk + EXT2_BLOCK_SIZE * (free_block_idx), source_fd, source_size);
-        source_size -= EXT2_BLOCK_SIZE;
-        fseek(source_fd, EXT2_BLOCK_SIZE, SEEK_CUR);
+        if (source_size>=EXT2_BLOCK_SIZE){
+            fread(disk + EXT2_BLOCK_SIZE * (new_inode->i_block[i]), 1, EXT2_BLOCK_SIZE, source_fd);
+            source_size -= EXT2_BLOCK_SIZE;
+        } else{
+            fread(disk + EXT2_BLOCK_SIZE * (new_inode->i_block[i]), 1, (size_t) source_size, source_fd);
+            source_size -= source_size;
+
+        }
 
         set_bitmap(1, free_block_idx, 1);
         sb->s_free_blocks_count--;
@@ -84,15 +84,24 @@ int main(int argc, char **argv) {
 
     if (block_need>12){
         free_block_idx = find_free_block() + 1;
+        set_bitmap(1, free_block_idx, 1);
+        sb->s_free_blocks_count--;
+        gdt->bg_free_blocks_count--;
+        new_inode->i_blocks += 2;
+
         new_inode->i_block[12]=(unsigned int) free_block_idx;
-        unsigned *indirection = (unsigned int *)(disk + ((new_inode->i_block[12]-1) * EXT2_BLOCK_SIZE));
+        int *indirection = (int *)(disk + ((new_inode->i_block[12]) * EXT2_BLOCK_SIZE));
 
         for (int j = 0; j < block_need-12-1; j++) {
             free_block_idx = find_free_block() + 1;
             indirection[j] = (unsigned int) free_block_idx;
-            memcpy(disk + EXT2_BLOCK_SIZE * (free_block_idx), source_fd, source_size);
-            source_size-=EXT2_BLOCK_SIZE;
-            fseek(source_fd, EXT2_BLOCK_SIZE, SEEK_CUR);
+            if (source_size>=EXT2_BLOCK_SIZE){
+                fread(disk + EXT2_BLOCK_SIZE * (indirection[j]), 1, EXT2_BLOCK_SIZE, source_fd);
+                source_size -= EXT2_BLOCK_SIZE;
+            } else{
+                fread(disk + EXT2_BLOCK_SIZE * (indirection[j]), 1, (size_t) source_size, source_fd);
+                source_size -= source_size;
+            }
 
             set_bitmap(1, free_block_idx, 1);
             sb->s_free_blocks_count--;
@@ -103,7 +112,12 @@ int main(int argc, char **argv) {
 
     print_dir_block(dir_entry);
 
-    add_parent_block(dir_entry, target_name, EXT2_FT_REG_FILE);
-    dir_entry->inode= (unsigned int) free_inode_idx;
+    struct ext2_dir_entry* new_add =  add_parent_block(dir_entry, target_name, EXT2_FT_REG_FILE);
+    new_add->inode= (unsigned int) free_inode_idx;
+    print_dir_block(dir_entry);
 
+    if (fclose(source_fd) != 0) {
+        perror("Error closing file\n");
+        exit(1);
+    }
 }
