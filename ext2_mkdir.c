@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 
     char* target_name = get_last_name(first_front);
     struct ext2_dir_entry* dir_entry = get_parent_dir_block(first_front);
-    check_existence(dir_entry, target_name, EXT2_FT_DIR);
+    check_existence(dir_entry, target_name);
 
     // this idx starts from 1
     int free_inode_idx = find_free_inode() + 1;
