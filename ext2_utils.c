@@ -505,6 +505,43 @@ struct ext2_dir_entry* add_parent_block(struct ext2_dir_entry* dir_entry, char* 
     return new_dir;
 }
 
+void constrcut_dir_ll(struct ext2_dir_entry* dir_entry){
+    struct ext2_inode* inode = &inode_table[dir_entry->inode-1];
+    struct ext2_dir_entry* new_dir;
+
+    dir_ll* init_ll = malloc(sizeof(dir_ll));
+    init_ll->dir_ent=dir_entry;
+    init_ll->next=dir_ll_head;
+    dir_ll_head=init_ll;
+
+    dir_ll* cur_dir_ll;
+    int k =0;
+    for (int i =0; i < inode->i_blocks/2;i++){
+        while (k < EXT2_BLOCK_SIZE) {
+            cur_dir_ll =malloc(sizeof(dir_ll));
+            cur_dir_ll->dir_ent=dir_entry;
+            cur_dir_ll->next=dir_ll_head;
+            dir_ll_head = cur_dir_ll;
+
+            k += dir_entry->rec_len;
+            dir_entry = (void*)(dir_entry) + dir_entry -> rec_len;
+
+        }
+    }
+
+    // now reverse this linked list
+    dir_ll* prev = NULL;
+    dir_ll* cur = dir_ll_head;
+    dir_ll* next = NULL;
+
+    while (cur!=NULL){
+        next=cur->next;
+        cur->next=prev;
+        prev=cur;
+        cur=next;
+    }
+    dir_ll_head=prev;
+}
 
 void init_inode(struct ext2_inode* new_inode){
     // the following are trivial staff
@@ -527,10 +564,10 @@ void init_inode(struct ext2_inode* new_inode){
 /*
  * name is file / dir name.
  */
-void check_existence(struct ext2_dir_entry* first_dir_ent , char* name, int type){
+void check_existence(struct ext2_dir_entry* first_dir_ent , char* name){
     int k = 0;
     while (k < EXT2_BLOCK_SIZE) {
-        if (type == first_dir_ent->file_type && (strncmp(name, first_dir_ent->name, first_dir_ent->name_len)==0)) {
+        if ((strncmp(name, first_dir_ent->name, first_dir_ent->name_len)==0)) {
             fprintf(stderr, "File or directory already exists.");
             exit(EEXIST);
         }
@@ -561,25 +598,6 @@ int check_type(struct ext2_dir_entry* first_dir_ent , char* name){
     }
     return has_dir+has_reg;
 }
-
-//int get_inode_idx(struct ext2_dir_entry* first_dir_ent, char* name, int type){
-//    int k = 0;
-//    while (k < EXT2_BLOCK_SIZE) {
-//        if ((strncmp(name, first_dir_ent->name, first_dir_ent->name_len)==0)) {
-//            indicator++;
-//            result = first_dir_ent->file_type
-//        }
-//        k += first_dir_ent->rec_len;
-//        first_dir_ent = (void*)(first_dir_ent) + first_dir_ent -> rec_len;
-//    }
-//    if (result && indicator==1){
-//        return result;
-//    } else if (result && indicator==2){
-//        return 3;
-//    } else{
-//        return 0;
-//    }
-//}
 
 // TODO remember to free result
 char* get_last_name(ll* ll_head){

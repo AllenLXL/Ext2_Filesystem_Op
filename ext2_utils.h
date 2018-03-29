@@ -36,6 +36,12 @@ typedef struct linked_list{
     int name_len;
 } ll;
 
+typedef struct dir_ent_linklst{
+    struct dir_ent_linklst* next;
+    struct ext2_dir_entry* dir_ent;
+} dir_ll;
+dir_ll* dir_ll_head;
+
 ll* first_front;
 
 ll* second_front;
@@ -59,7 +65,7 @@ unsigned int modify_parent_block();
 
 struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head);
 
-void check_existence(struct ext2_dir_entry* first_dir_ent, char* name, int type);
+void check_existence(struct ext2_dir_entry* first_dir_ent, char* name);
 
 int get_ll_length(ll* head);
 char* get_last_name(ll* ll_head);
@@ -72,6 +78,8 @@ int check_type(struct ext2_dir_entry* first_dir_ent , char* name);
 
 int get_inode_idx(struct ext2_dir_entry* first_dir_ent, char* name, int type);
 struct ext2_dir_entry* get_dir_ent(struct ext2_dir_entry* par_fir_ent, char* name);
+
+void constrcut_dir_ll(struct ext2_dir_entry* dir_entry);
 #endif //A4_EXT2_UTILS_H
 
 

@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
         for (int j = 0; j < block_need-12-1; j++) {
             free_block_idx = find_free_block() + 1;
             indirection[j] = (unsigned int) free_block_idx;
-            memcpy(disk + EXT2_BLOCK_SIZE * (free_block_idx-1), source_fd, source_size);
+            memcpy(disk + EXT2_BLOCK_SIZE * (free_block_idx), source_fd, source_size);
             source_size-=EXT2_BLOCK_SIZE;
             fseek(source_fd, EXT2_BLOCK_SIZE, SEEK_CUR);
 

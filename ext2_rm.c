@@ -1,4 +1,59 @@
 //
 // Created by LiAllen on 2018-03-19.
 //
+#include "ext2_utils.h"
 
+int main(int argc, char **argv) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <image file name> <abs path of ext2>\n", argv[0]);
+        exit(1);
+    }
+    validate_path(argv[2]);
+
+    init_ptrs(argv[1]);
+
+    first_front=NULL;
+    construct_ll(argv[2], &first_front);
+
+    char* name = get_last_name(first_front);
+
+    struct ext2_dir_entry* dir_ent = get_parent_dir_block(first_front);
+    int type = check_type(dir_ent, name);
+    if (!type){
+        fprintf(stderr, "File to delete not exist\n");
+        exit(ENOENT);
+    }
+    struct ext2_inode* parent_inode = &inode_table[dir_ent->inode-1];
+
+    if (strncmp(dir_ent->name, name, dir_ent->name_len)==0 && dir_ent->file_type==EXT2_FT_REG_FILE){
+        set_bitmap(0, dir_ent->inode, 0);
+        sb->s_free_inodes_count++;
+        gdt->bg_free_inodes_count++;
+        dir_ent->inode==0;
+    }
+
+    constrcut_dir_ll(dir_ent);
+    dir_ll* loop;
+    while (strncmp(loop->next->dir_ent->name, name, loop->next->dir_ent->name_len)!=0){
+        loop=loop->next;
+    }
+    loop->dir_ent->rec_len+=loop->next->dir_ent->rec_len;
+
+    int rm_inode_idx=loop->next->dir_ent->inode;
+    set_bitmap(0, rm_inode_idx, 0);
+    sb->s_free_inodes_count++;
+    gdt->bg_free_inodes_count++;
+
+    for (int i=0; i<inode_table[rm_inode_idx-1].i_blocks/2&&i<12;i++){
+        set_bitmap(1, inode_table[rm_inode_idx-1].i_block[i], 0);
+        sb->s_free_inodes_count++;
+        gdt->bg_free_inodes_count++;
+    }
+    if (inode_table[rm_inode_idx-1].i_blocks/2 > 12){
+        for (int i=0; i<inode_table[rm_inode_idx-1].i_blocks/2 -13;i++){
+            set_bitmap(1, inode_table[rm_inode_idx-1].i_block[i], 0);
+            sb->s_free_inodes_count++;
+            gdt->bg_free_inodes_count++;
+        }
+    }
+}
