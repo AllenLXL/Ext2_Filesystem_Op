@@ -65,12 +65,13 @@ int main(int argc, char **argv) {
 //        print_dir_block(parent_dir_sec);
         struct ext2_dir_entry* new_add = add_parent_block(parent_dir_sec, name_2, EXT2_FT_SYMLINK);
 //        print_dir_block(new_add);
-        new_add->inode = (unsigned int) free_block_idx;
+        new_add->inode = (unsigned int) free_inode_idx;
         print_dir_block(parent_dir_sec);
     } else{
         struct ext2_dir_entry* new_add = add_parent_block(parent_dir_sec, name_2, EXT2_FT_REG_FILE);
         struct ext2_dir_entry* link = get_dir_ent(parent_dir_fir, name_1);
         new_add->inode = link->inode;
+        inode_table[new_add->inode-1].i_links_count++;
     }
 
 }

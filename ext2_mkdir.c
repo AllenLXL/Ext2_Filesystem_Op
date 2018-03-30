@@ -1,9 +1,4 @@
-//
-// Created by LiAllen on 2018-03-19.
-//
-
 #include "ext2_utils.h"
-
 
 int main(int argc, char **argv) {
     if(argc != 3) {
@@ -74,5 +69,4 @@ int main(int argc, char **argv) {
     gdt->bg_free_inodes_count--;
     gdt->bg_free_blocks_count--;
     gdt->bg_used_dirs_count++;
-
 }
