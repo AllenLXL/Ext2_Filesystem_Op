@@ -52,8 +52,12 @@ int main(int argc, char **argv) {
         gdt->bg_free_blocks_count++;
     }
     if (inode_table[rm_inode_idx-1].i_blocks/2 > 12){
+        sb->s_free_blocks_count++;
+        gdt->bg_free_blocks_count++;
+        set_bitmap(1, inode_table[rm_inode_idx-1].i_block[12], 0);
+        int *indirection = (int *)(disk + ((inode_table[rm_inode_idx-1].i_block[12]) * EXT2_BLOCK_SIZE));
         for (int i=0; i<inode_table[rm_inode_idx-1].i_blocks/2 -13;i++){
-            set_bitmap(1, inode_table[rm_inode_idx-1].i_block[i], 0);
+            set_bitmap(1, indirection[i], 0);
             sb->s_free_blocks_count++;
             gdt->bg_free_blocks_count++;
         }
