@@ -30,6 +30,13 @@ add_executable(ext2_rm
         ext2_utils.h
         )
 
+add_executable(ext2_restore
+        ext2.h
+        ext2_restore.c
+        ext2_utils.c
+        ext2_utils.h
+        )
+
 add_executable(readimage
         ext2.h
         readimage.c

@@ -73,5 +73,5 @@ int main(int argc, char **argv) {
         new_add->inode = link->inode;
         inode_table[new_add->inode-1].i_links_count++;
     }
-
+    return 0;
 }

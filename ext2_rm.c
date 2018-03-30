@@ -1,6 +1,3 @@
-//
-// Created by LiAllen on 2018-03-19.
-//
 #include "ext2_utils.h"
 
 int main(int argc, char **argv) {
@@ -22,18 +19,24 @@ int main(int argc, char **argv) {
     if (!type){
         fprintf(stderr, "File to delete not exist\n");
         exit(ENOENT);
+    } else if (type==2){
+        fprintf(stderr, "Cannot remove a directory\n");
+        exit(EISDIR);
     }
     struct ext2_inode* parent_inode = &inode_table[dir_ent->inode-1];
+    //TODO think more complex situation
 
     print_dir_block(dir_ent);
 
-    if (strncmp(dir_ent->name, name, dir_ent->name_len)==0 && dir_ent->file_type==EXT2_FT_REG_FILE){
+    if (strncmp(dir_ent->name, name, dir_ent->name_len)==0){
         set_bitmap(0, dir_ent->inode, 0);
         sb->s_free_inodes_count++;
         gdt->bg_free_inodes_count++;
         dir_ent->inode=0;
+        return 0;
     }
 
+    dir_ll_head=NULL;
     constrcut_dir_ll(dir_ent);
     dir_ll* loop = dir_ll_head;
     while (strncmp(loop->next->dir_ent->name, name, loop->next->dir_ent->name_len)!=0){
@@ -63,4 +66,5 @@ int main(int argc, char **argv) {
         }
     }
     print_dir_block(dir_ent);
+    return 0;
 }

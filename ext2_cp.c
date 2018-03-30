@@ -47,6 +47,7 @@ int main(int argc, char **argv) {
     }
 
     struct ext2_dir_entry* dir_entry = get_parent_dir_block(first_front);
+
     char* target_name = get_last_name(first_front);
     check_existence(dir_entry, target_name);//TODO CHANGE THIS CHECK
 
@@ -120,4 +121,5 @@ int main(int argc, char **argv) {
         perror("Error closing file\n");
         exit(1);
     }
+    return 0;
 }

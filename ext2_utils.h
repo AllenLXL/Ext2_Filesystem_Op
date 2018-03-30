@@ -1,6 +1,3 @@
-//
-// Created by LiAllen on 2018-03-21.
-//
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -10,6 +7,7 @@
 #include <sys/mman.h>
 #include <errno.h>
 #include <memory.h>
+#include <time.h>
 #include "ext2.h"
 
 #ifndef A4_EXT2_UTILS_H

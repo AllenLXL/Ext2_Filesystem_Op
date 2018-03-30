@@ -508,12 +508,11 @@ struct ext2_dir_entry* add_parent_block(struct ext2_dir_entry* dir_entry, char* 
 
 void constrcut_dir_ll(struct ext2_dir_entry* dir_entry){
     struct ext2_inode* inode = &inode_table[dir_entry->inode-1];
-    struct ext2_dir_entry* new_dir;
 
-    dir_ll* init_ll = malloc(sizeof(dir_ll));
-    init_ll->dir_ent=dir_entry;
-    init_ll->next=dir_ll_head;
-    dir_ll_head=init_ll;
+//    dir_ll* init_ll = malloc(sizeof(dir_ll));
+//    init_ll->dir_ent=dir_entry;
+//    init_ll->next=dir_ll_head;
+//    dir_ll_head=init_ll;
 
     dir_ll* cur_dir_ll;
     int k =0;
@@ -553,7 +552,8 @@ void init_inode(struct ext2_inode* new_inode){
     new_inode->i_file_acl = 0;    /* File ACL */
     new_inode->i_dir_acl = 0;     /* Directory ACL */
     new_inode->i_faddr = 0;
-    new_inode->i_dtime=0; //TODO ???
+    new_inode->i_dtime=0;
+    new_inode->i_ctime=time(NULL);
     // other necessary attributes
     new_inode->i_blocks=0;
     new_inode->i_links_count=0;

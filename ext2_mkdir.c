@@ -69,4 +69,5 @@ int main(int argc, char **argv) {
     gdt->bg_free_inodes_count--;
     gdt->bg_free_blocks_count--;
     gdt->bg_used_dirs_count++;
+    return 0;
 }
