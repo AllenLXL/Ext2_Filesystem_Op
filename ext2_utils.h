@@ -80,6 +80,8 @@ struct ext2_dir_entry* get_dir_ent(struct ext2_dir_entry* par_fir_ent, char* nam
 void constrcut_dir_ll(struct ext2_dir_entry* dir_entry);
 int compare(int entry_type, int inode_type);
 int check_files_in_dir(int inode_idx);
+int check_blocks(int inode_idx);
+int get_bitmap(int bm_idx, int idx);
 #endif //A4_EXT2_UTILS_H
 
 

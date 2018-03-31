@@ -649,6 +649,7 @@ int check_files_in_dir(int inode_idx){
                 current_node->dir_ent->file_type = EXT2_FT_REG_FILE;
             } else if (inode_table[current_node->dir_ent->inode - 1].i_mode & EXT2_S_IFDIR){
                 current_node->dir_ent->file_type = EXT2_FT_DIR;
+                gdt->bg_used_dirs_count++;
             } else if  (inode_table[current_node->dir_ent->inode - 1].i_mode & EXT2_S_IFLNK){
                 current_node->dir_ent->file_type = EXT2_FT_SYMLINK;
             }
@@ -660,3 +661,65 @@ int check_files_in_dir(int inode_idx){
     return errors;
 }
 
+/*
+ * the getter function is very similar to setter but it
+ * returns the mode at the give idx. return -1 for error
+ */
+int get_bitmap(int bm_idx, int idx){
+    idx --;
+    int num_bit = 0;
+    unsigned char* target_bm;
+    if (!bm_idx){
+        num_bit = sb->s_inodes_count;
+        target_bm = inode_bm;
+    } else{
+        num_bit = sb->s_blocks_count;
+        target_bm = block_bm;
+    }
+    for (int byte = 0; byte < num_bit / 8; byte++){
+        for (int bit = 0; bit < 8; bit++){
+            if ((byte*8+bit) == idx){
+                if ((target_bm[byte] & (1 << (bit)))>0){
+                    return 1;
+                }
+                return 0;
+            }
+        }
+    }
+    // code reach here indicates error
+    exit(1);
+}
+
+int check_blocks(int inode_idx){
+    int errors = 0;
+    struct ext2_inode* inode = &inode_table[inode_idx];
+    int block_need = inode->i_blocks/2;
+
+    for (int i =0; i < block_need && i<12;i++){
+        if (get_bitmap(1, inode->i_block[i]) == 0){
+            set_bitmap(1, inode->i_block[i], 1);
+            sb->s_free_blocks_count--;
+            gdt->bg_free_blocks_count--;
+            errors ++;
+        }
+    }
+    if (block_need>12){
+        if (get_bitmap(1, inode->i_block[12]) == 0) {
+            set_bitmap(1, inode->i_block[12], 1);
+            sb->s_free_blocks_count--;
+            gdt->bg_free_blocks_count--;
+            errors ++;
+        }
+        int* location = (int *)(disk + EXT2_BLOCK_SIZE*inode[inode_idx].i_block[12]);
+        for (int k = 0; k < block_need-13; k++) {
+            if (get_bitmap(1, location[k]) == 0){
+                set_bitmap(1, location[k], 1);
+                sb->s_free_blocks_count--;
+                gdt->bg_free_blocks_count--;
+                errors ++;
+            }
+        }
+    }
+    printf("Fixed: %d in-use data blocks not marked in data bitmap for inode: [%d]\n", errors, inode_idx);
+    return errors;
+}
