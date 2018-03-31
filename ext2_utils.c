@@ -513,6 +513,8 @@ void constrcut_dir_ll(struct ext2_dir_entry* dir_entry){
     dir_ll* cur_dir_ll;
     int k =0;
     for (int i =0; i < inode->i_blocks/2;i++){
+        k=0;
+        dir_entry= (struct ext2_dir_entry *) (disk + EXT2_BLOCK_SIZE * inode->i_block[i]);
         while (k < EXT2_BLOCK_SIZE) {
             cur_dir_ll =malloc(sizeof(dir_ll));
             cur_dir_ll->dir_ent=dir_entry;
@@ -521,8 +523,8 @@ void constrcut_dir_ll(struct ext2_dir_entry* dir_entry){
 
             k += dir_entry->rec_len;
             dir_entry = (void*)(dir_entry) + dir_entry -> rec_len;
-
         }
+
     }
 
     // now reverse this linked list
@@ -549,7 +551,7 @@ void init_inode(struct ext2_inode* new_inode){
     new_inode->i_dir_acl = 0;     /* Directory ACL */
     new_inode->i_faddr = 0;
     new_inode->i_dtime=0;
-    new_inode->i_ctime=time(NULL);
+    new_inode->i_ctime= (unsigned int) time(NULL);
     // other necessary attributes
     new_inode->i_blocks=0;
     new_inode->i_links_count=0;
@@ -710,7 +712,7 @@ int check_blocks(int inode_idx){
             gdt->bg_free_blocks_count--;
             errors ++;
         }
-        int* location = (int *)(disk + EXT2_BLOCK_SIZE*inode[inode_idx].i_block[12]);
+        int* location = (int *)(disk + inode->i_block[12]);
         for (int k = 0; k < block_need-13; k++) {
             if (get_bitmap(1, location[k]) == 0){
                 set_bitmap(1, location[k], 1);
