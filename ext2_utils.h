@@ -78,6 +78,8 @@ int get_inode_idx(struct ext2_dir_entry* first_dir_ent, char* name, int type);
 struct ext2_dir_entry* get_dir_ent(struct ext2_dir_entry* par_fir_ent, char* name);
 
 void constrcut_dir_ll(struct ext2_dir_entry* dir_entry);
+int compare(int entry_type, int inode_type);
+int check_files_in_dir(int inode_idx);
 #endif //A4_EXT2_UTILS_H
 
 

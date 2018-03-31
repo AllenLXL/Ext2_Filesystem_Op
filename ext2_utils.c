@@ -509,11 +509,7 @@ struct ext2_dir_entry* add_parent_block(struct ext2_dir_entry* dir_entry, char* 
 void constrcut_dir_ll(struct ext2_dir_entry* dir_entry){
     struct ext2_inode* inode = &inode_table[dir_entry->inode-1];
 
-//    dir_ll* init_ll = malloc(sizeof(dir_ll));
-//    init_ll->dir_ent=dir_entry;
-//    init_ll->next=dir_ll_head;
-//    dir_ll_head=init_ll;
-
+    dir_ll_head=NULL;
     dir_ll* cur_dir_ll;
     int k =0;
     for (int i =0; i < inode->i_blocks/2;i++){
@@ -624,3 +620,43 @@ char* get_sec_last_name(ll* ll_head, int ll_length){
     strncpy(result, loop->name, (size_t) loop->name_len);
     return result;
 }
+
+
+int compare(int entry_type, int inode_type){
+    if (entry_type != EXT2_FT_REG_FILE && inode_type == EXT2_S_IFREG) {
+        return 1;
+    } else if (entry_type != EXT2_FT_DIR && inode_type == EXT2_S_IFDIR){
+        return 1;
+    } else if (entry_type != EXT2_FT_SYMLINK && inode_type == EXT2_S_IFLNK){
+        return 1;
+    }
+    return 0;
+}
+
+// check every file in a directory if their file_type is equal to
+// imode in inode table. If there's an error, correct it, and return
+// the total number of change.
+int check_files_in_dir(int inode_idx){
+    struct ext2_dir_entry *current = (struct ext2_dir_entry *)(disk + inode_table[inode_idx].i_block[0] * EXT2_BLOCK_SIZE);
+
+    constrcut_dir_ll(current);
+
+    int errors = 0;
+    dir_ll* current_node = dir_ll_head;
+    while (current_node != NULL) {
+        if (compare(current_node->dir_ent->file_type, inode_table[current_node->dir_ent->inode].i_mode)){
+            if (inode_table[current_node->dir_ent->inode - 1].i_mode & EXT2_S_IFREG) {
+                current_node->dir_ent->file_type = EXT2_FT_REG_FILE;
+            } else if (inode_table[current_node->dir_ent->inode - 1].i_mode & EXT2_S_IFDIR){
+                current_node->dir_ent->file_type = EXT2_FT_DIR;
+            } else if  (inode_table[current_node->dir_ent->inode - 1].i_mode & EXT2_S_IFLNK){
+                current_node->dir_ent->file_type = EXT2_FT_SYMLINK;
+            }
+            printf("Fixed: Entry type vs inode mismatch: inode [%d]\n", current_node->dir_ent->inode);
+            errors += 1;
+        }
+        current_node = current_node->next;
+    }
+    return errors;
+}
+
