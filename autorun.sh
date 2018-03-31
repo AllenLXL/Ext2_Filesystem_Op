@@ -83,5 +83,3 @@ do
 	g=$(basename $the_file)
 	./ext2_dump self-tester/runs/$g > self-tester/results/$g.txt
 done
-
-
