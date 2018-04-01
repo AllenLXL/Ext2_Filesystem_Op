@@ -34,9 +34,6 @@ int main(int argc, char **argv) {
     struct ext2_dir_entry* new_dir = add_parent_block(dir_entry, target_name, EXT2_FT_DIR);
     new_dir->inode= (unsigned int) free_inode_idx;
 
-    print_dir_block(dir_entry);
-    printf("=================================================\n");
-
     //set first dir_entry to itself
     struct ext2_dir_entry *self_dir = (void*)disk + ((free_block_idx) * EXT2_BLOCK_SIZE);
     self_dir->inode = (unsigned int) free_inode_idx;
@@ -53,8 +50,6 @@ int main(int argc, char **argv) {
     parent_dir->file_type = EXT2_FT_DIR;
     strncpy(parent_dir->name, "..", 2);
     inode_table[inode_idx].i_links_count++;
-
-    print_dir_block(self_dir);
 
 
     // switch bitmap off

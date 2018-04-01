@@ -26,7 +26,6 @@ int main(int argc, char **argv) {
 //    struct ext2_inode* parent_inode = &inode_table[dir_ent->inode-1];
     //TODO think more complex situation
 
-    print_dir_block(dir_ent);
 
     if (strncmp(dir_ent->name, name, dir_ent->name_len)==0){
         set_bitmap(0, dir_ent->inode, 0);
@@ -65,6 +64,5 @@ int main(int argc, char **argv) {
             gdt->bg_free_blocks_count++;
         }
     }
-    print_dir_block(dir_ent);
     return 0;
 }

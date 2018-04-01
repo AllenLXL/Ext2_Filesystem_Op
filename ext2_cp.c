@@ -111,11 +111,8 @@ int main(int argc, char **argv) {
         }
     }
 
-    print_dir_block(dir_entry);
-
     struct ext2_dir_entry* new_add =  add_parent_block(dir_entry, target_name, EXT2_FT_REG_FILE);
     new_add->inode= (unsigned int) free_inode_idx;
-    print_dir_block(dir_entry);
 
     if (fclose(source_fd) != 0) {
         perror("Error closing file\n");

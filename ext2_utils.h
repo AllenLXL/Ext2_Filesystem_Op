@@ -23,9 +23,9 @@ unsigned char *inode_bm;
 
 struct ext2_inode *inode_table;
 
-void print_bm();
-void print_dir_block(struct ext2_dir_entry* first_row);
-void print_inode();
+//void print_bm();
+//void print_dir_block(struct ext2_dir_entry* first_row);
+//void print_inode();
 
 
 typedef struct linked_list{

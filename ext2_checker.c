@@ -117,6 +117,8 @@ int main(int argc, char **argv) {
         }
         if (!change) {
             printf("No file system inconsistencies detected!\n");
+        } else{
+            printf("%d file system inconsistencies repaired!\n", change);
         }
     }
 }

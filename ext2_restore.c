@@ -16,7 +16,6 @@ int main(int argc, char** argv){
     char* name = get_last_name(first_front);
 
     struct ext2_dir_entry* dir_ent = get_parent_dir_block(first_front);
-    print_dir_block(dir_ent);
 //    int type = check_type(dir_ent, name);
 //    /*if (!type){
 //        fprintf(stderr, "File to delete not exist\n");
