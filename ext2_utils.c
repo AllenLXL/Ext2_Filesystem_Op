@@ -646,7 +646,7 @@ int check_files_in_dir(int inode_idx){
     int errors = 0;
     dir_ll* current_node = dir_ll_head;
     while (current_node != NULL) {
-        printf("====> %d, ll length is %d ===\n",current_node->dir_ent->inode-1, get_ll_length(dir_ll_head));
+//        printf("====> %d, ll length is %d ===\n",current_node->dir_ent->inode-1, get_ll_length(dir_ll_head));
         if (compare(current_node->dir_ent->file_type, inode_table[current_node->dir_ent->inode-1].i_mode)){
             if (inode_table[current_node->dir_ent->inode - 1].i_mode & EXT2_S_IFREG) {
                 current_node->dir_ent->file_type = EXT2_FT_REG_FILE;
@@ -689,6 +689,7 @@ int get_bitmap(int bm_idx, int idx){
             }
         }
     }
+    return -1;
     // code reach here indicates error
 //    fprintf(stderr, "Invalid block/inode index\n");
 //    exit(1);
@@ -714,7 +715,7 @@ int check_blocks(int inode_idx){
             gdt->bg_free_blocks_count--;
             errors ++;
         }
-        int* location = (int *)(disk + inode->i_block[12]);
+        int* location = (int *)(disk + inode->i_block[12]*EXT2_BLOCK_SIZE);
         for (int k = 0; k < block_need-13; k++) {
             if (get_bitmap(1, location[k]) == 0){
                 set_bitmap(1, location[k], 1);
@@ -724,6 +725,9 @@ int check_blocks(int inode_idx){
             }
         }
     }
-    printf("Fixed: %d in-use data blocks not marked in data bitmap for inode: [%d]\n", errors, inode_idx);
+    if (errors){
+        printf("Fixed: %d in-use data blocks not marked in data bitmap for inode: [%d]\n", errors, inode_idx);
+    }
+
     return errors;
 }

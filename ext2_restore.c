@@ -27,7 +27,7 @@ int main(int argc, char** argv){
 //        exit(EISDIR);
 //    }
 
-    struct ext2_inode* parent_inode = &inode_table[dir_ent->inode-1];
+//    struct ext2_inode* parent_inode = &inode_table[dir_ent->inode-1];
 
 
     if (strncmp(dir_ent->name, name, dir_ent->name_len)==0){

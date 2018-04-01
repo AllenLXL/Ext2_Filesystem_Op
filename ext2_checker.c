@@ -71,23 +71,23 @@ int main(int argc, char **argv) {
         // adjust blocks & inodes numbers.
 
         if (block_num != sb->s_free_blocks_count) {
-            change = abs(sb->s_free_blocks_count - block_num);
+            change = abs((int)sb->s_free_blocks_count - block_num);
             sb->s_free_blocks_count = (unsigned int) block_num;
             printf("Fixed: superblock's free blocks counter was off by %d compared to the bitmap\n", change);
         }
         if (block_num != gdt->bg_free_blocks_count) {
-            change = abs(gdt->bg_free_blocks_count - block_num);
+            change = abs((int)gdt->bg_free_blocks_count - block_num);
             printf("%d, %d\n", gdt->bg_free_blocks_count, block_num);
             gdt->bg_free_blocks_count = (unsigned short) block_num;
             printf("Fixed: block group's free blocks counter was off by %d compared to the bitmap\n", change);
         }
         if (inode_num != sb->s_free_inodes_count) {
-            change = abs(sb->s_free_inodes_count - inode_num);
+            change = abs((int)sb->s_free_inodes_count - inode_num);
             sb->s_free_inodes_count = (unsigned int) inode_num;
             printf("Fixed: superblock's free inodes counter was off by %d compared to the bitmap\n", change);
         }
         if (inode_num != gdt->bg_free_inodes_count) {
-            change = abs(gdt->bg_free_inodes_count - inode_num);
+            change = abs((int)gdt->bg_free_inodes_count - inode_num);
             gdt->bg_free_inodes_count = (unsigned short) inode_num;
             printf("Fixed: block group's free inodes counter was off by %d compared to the bitmap\n", change);
         }

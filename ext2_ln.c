@@ -14,16 +14,27 @@ int main(int argc, char **argv) {
     if (argc == 5){
         symbolic =1;
     }
-    validate_path(argv[2]);
-    validate_path(argv[3]);
+    if (argc == 5){
+        validate_path(argv[3]);
+        validate_path(argv[4]);
+    } else{
+        validate_path(argv[2]);
+        validate_path(argv[3]);
+    }
 
     init_ptrs(argv[1]);
 
     first_front=NULL;
     second_front=NULL;
 
-    construct_ll(argv[2], &first_front);
-    construct_ll(argv[3], &second_front);
+    if (argc ==5){
+        construct_ll(argv[3], &first_front);
+        construct_ll(argv[4], &second_front);
+    } else{
+        construct_ll(argv[2], &first_front);
+        construct_ll(argv[3], &second_front);
+    }
+
 
     char* name_1 = get_last_name(first_front);
     char* name_2 = get_last_name(second_front);
@@ -52,7 +63,7 @@ int main(int argc, char **argv) {
         init_inode(new_inode);
 
         new_inode->i_mode=EXT2_S_IFLNK;
-        int path_len = (int) strlen(argv[2]);
+        int path_len = (int) strlen(argv[3]);
         new_inode->i_size= (unsigned int) path_len;
         new_inode->i_links_count = 1;
         int free_block_idx = find_free_block() + 1;
@@ -61,7 +72,7 @@ int main(int argc, char **argv) {
         set_bitmap(1, free_block_idx, 1);
         sb->s_free_blocks_count--;
         gdt->bg_free_blocks_count--;
-        memcpy(disk + EXT2_BLOCK_SIZE*free_block_idx, argv[2], path_len);
+        memcpy(disk + EXT2_BLOCK_SIZE*free_block_idx, argv[3], path_len);
 //        print_dir_block(parent_dir_sec);
         struct ext2_dir_entry* new_add = add_parent_block(parent_dir_sec, name_2, EXT2_FT_SYMLINK);
 //        print_dir_block(new_add);

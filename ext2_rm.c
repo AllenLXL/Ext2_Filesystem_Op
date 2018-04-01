@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Cannot remove a directory\n");
         exit(EISDIR);
     }
-    struct ext2_inode* parent_inode = &inode_table[dir_ent->inode-1];
+//    struct ext2_inode* parent_inode = &inode_table[dir_ent->inode-1];
     //TODO think more complex situation
 
     print_dir_block(dir_ent);
