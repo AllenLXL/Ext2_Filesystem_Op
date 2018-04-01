@@ -8,12 +8,25 @@ int main(int argc, char **argv) {
     init_ptrs(argv[1]);
     int change = 0;
 
+
+    // check if imode match file_type. If an Inode in inode_table
+    // is a directory, we check everything under that folder.
+
+    // traverse all dir to check all dir ent, trust inode->imode
+    for (int j = 0; j < sb->s_inodes_count; j++) {
+        if (j == EXT2_ROOT_INO - 1 || j > EXT2_GOOD_OLD_FIRST_INO) {
+            if (inode_table[j].i_mode & EXT2_S_IFDIR) {
+                change += check_files_in_dir(j);
+            }
+        }
+    }
+
     // checker 3 to you must check that its inode is marked as
     // allocated in the inode bitmap. trust dir_ent->indoe
 //    printf("%d\n", get_bitmap(0, 1));
 //    unsigned short dir_num =0;
     for (int i = 0; i < sb->s_inodes_count; i++) {
-        if (i == EXT2_ROOT_INO - 1 || i >= EXT2_GOOD_OLD_FIRST_INO) {
+        if (i == EXT2_ROOT_INO - 1 || i > EXT2_GOOD_OLD_FIRST_INO) {
             if (inode_table[i].i_size > 0) {
                 if (get_bitmap(0, i + 1) != 1) {
                     change += 1;
@@ -79,36 +92,28 @@ int main(int argc, char **argv) {
             printf("Fixed: block group's free inodes counter was off by %d compared to the bitmap\n", change);
         }
 
-        // check if imode match file_type. If an Inode in inode_table
-        // is a directory, we check everything under that folder.
 
-        // traverse all dir to check all dir ent, trust inode->imode
-        for (int i = 0; i < sb->s_inodes_count; i++) {
-//            if (i == EXT2_ROOT_INO - 1 || i >= EXT2_GOOD_OLD_FIRST_INO) {
-                if (inode_table[i].i_mode & EXT2_S_IFDIR) {
-                    change += check_files_in_dir(i);
-                }
-//            }
-        }
 
 
         // chcek d time
-        for (int i = 0; i < sb->s_inodes_count; i++) {
+        for (int k = 0; k < sb->s_inodes_count; k++) {
 //            if (i == EXT2_ROOT_INO - 1 || i >= EXT2_GOOD_OLD_FIRST_INO) {
-                if (((inode_table[i].i_mode & EXT2_S_IFREG) || (inode_table[i].i_mode & EXT2_S_IFDIR) ||
-                     (inode_table[i].i_mode & EXT2_S_IFLNK)) && inode_table[i].i_dtime != 0) {
+                if (((inode_table[k].i_mode & EXT2_S_IFREG) || (inode_table[k].i_mode & EXT2_S_IFDIR) ||
+                     (inode_table[k].i_mode & EXT2_S_IFLNK)) && inode_table[k].i_dtime != 0) {
                     change += 1;
-                    printf("Fixed: valid inode marked for deletion: [%d]\n", i + 1);
-                    inode_table[i].i_dtime = 0;
+                    printf("Fixed: valid inode marked for deletion: [%d]\n", k + 1);
+                    inode_table[k].i_dtime = 0;
                 }
 //            }
         }
 
         // check block, do not trust block bm
-        for (int i = 0; i < sb->s_inodes_count; i++) {
-            if (inode_table[i].i_size > 0) {
-                change += check_blocks(i);
-            }
+        for (int l = 0; l < sb->s_inodes_count; l++) {
+//            if (l == EXT2_ROOT_INO - 1 || l >= EXT2_GOOD_OLD_FIRST_INO) {
+                if (inode_table[l].i_size > 0) {
+                    change += check_blocks(l);
+                }
+//            }
         }
         if (!change) {
             printf("No file system inconsistencies detected!\n");

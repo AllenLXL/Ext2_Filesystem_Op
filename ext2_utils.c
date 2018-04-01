@@ -510,9 +510,9 @@ void constrcut_dir_ll(struct ext2_dir_entry* dir_entry){
     struct ext2_inode* inode = &inode_table[dir_entry->inode-1];
 
     dir_ll_head=NULL;
-    dir_ll* cur_dir_ll;
+    dir_ll* cur_dir_ll; // loop invariant
     int k =0;
-    for (int i =0; i < inode->i_blocks/2;i++){
+    for (int i=0; i < inode->i_blocks/2;i++){
         k=0;
         dir_entry= (struct ext2_dir_entry *) (disk + EXT2_BLOCK_SIZE * inode->i_block[i]);
         while (k < EXT2_BLOCK_SIZE) {
@@ -625,11 +625,11 @@ char* get_sec_last_name(ll* ll_head, int ll_length){
 
 
 int compare(int entry_type, int inode_type){
-    if (entry_type != EXT2_FT_REG_FILE && inode_type == EXT2_S_IFREG) {
+    if (entry_type != EXT2_FT_REG_FILE && (inode_type & EXT2_S_IFREG)){
         return 1;
-    } else if (entry_type != EXT2_FT_DIR && inode_type == EXT2_S_IFDIR){
+    } else if (entry_type != EXT2_FT_DIR && (inode_type & EXT2_S_IFDIR)){
         return 1;
-    } else if (entry_type != EXT2_FT_SYMLINK && inode_type == EXT2_S_IFLNK){
+    } else if (entry_type != EXT2_FT_SYMLINK && (inode_type & EXT2_S_IFLNK)){
         return 1;
     }
     return 0;
@@ -646,7 +646,8 @@ int check_files_in_dir(int inode_idx){
     int errors = 0;
     dir_ll* current_node = dir_ll_head;
     while (current_node != NULL) {
-        if (compare(current_node->dir_ent->file_type, inode_table[current_node->dir_ent->inode].i_mode)){
+        printf("====> %d, ll length is %d ===\n",current_node->dir_ent->inode-1, get_ll_length(dir_ll_head));
+        if (compare(current_node->dir_ent->file_type, inode_table[current_node->dir_ent->inode-1].i_mode)){
             if (inode_table[current_node->dir_ent->inode - 1].i_mode & EXT2_S_IFREG) {
                 current_node->dir_ent->file_type = EXT2_FT_REG_FILE;
             } else if (inode_table[current_node->dir_ent->inode - 1].i_mode & EXT2_S_IFDIR){
@@ -689,7 +690,8 @@ int get_bitmap(int bm_idx, int idx){
         }
     }
     // code reach here indicates error
-    exit(1);
+//    fprintf(stderr, "Invalid block/inode index\n");
+//    exit(1);
 }
 
 int check_blocks(int inode_idx){
