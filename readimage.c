@@ -315,13 +315,9 @@ int main(int argc, char **argv) {
                             exceed += dir_ent->rec_len;
                             dir_ent = (void*)(dir_ent) + dir_ent -> rec_len;
                         }
-
                     }
                 }
-
             }
-
-
         }
     }
     return 0;
