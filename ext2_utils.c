@@ -580,13 +580,16 @@ int check_type(struct ext2_dir_entry* first_dir_ent , char* name){
     struct ext2_inode* inode = &inode_table[first_dir_ent->inode-1];
     int has_reg = 0;
     int has_dir = 0;
+    int has_link = 0;
     for (int i=0; i < (inode->i_blocks/2); i++) {
         while (k < EXT2_BLOCK_SIZE) {
             if ((strncmp(name, first_dir_ent->name, first_dir_ent->name_len) == 0)) {
                 if (first_dir_ent->file_type==EXT2_FT_DIR){
                     has_dir+=2;
-                } else{
+                } else if (first_dir_ent->file_type==EXT2_FT_REG_FILE){
                     has_reg+=1;
+                } else if (first_dir_ent->file_type==EXT2_FT_SYMLINK){
+                    has_link+=3;
                 }
                 break;
             }
@@ -594,7 +597,7 @@ int check_type(struct ext2_dir_entry* first_dir_ent , char* name){
             first_dir_ent = (void *) (first_dir_ent) + first_dir_ent->rec_len;
         }
     }
-    return has_dir+has_reg;
+    return has_dir+has_reg+has_link;
 }
 
 // TODO remember to free result

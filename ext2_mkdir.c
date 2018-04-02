@@ -49,6 +49,7 @@ int main(int argc, char **argv) {
     parent_dir->name_len = 2;
     parent_dir->file_type = EXT2_FT_DIR;
     strncpy(parent_dir->name, "..", 2);
+
     inode_table[inode_idx].i_links_count++;
 
 
