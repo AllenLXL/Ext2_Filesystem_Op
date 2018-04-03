@@ -5,7 +5,10 @@
 
 #include "ext2_utils.h"
 
-void constrcut_dir_ll_spe(struct ext2_dir_entry* dir_entry, dir_ll* head){
+int freed[128];
+memset(freed, 0, 128);
+
+dir_ll* constrcut_dir_ll_spe(struct ext2_dir_entry* dir_entry, dir_ll* head){
     struct ext2_inode* inode = &inode_table[dir_entry->inode-1];
 
     head=NULL;
@@ -37,15 +40,20 @@ void constrcut_dir_ll_spe(struct ext2_dir_entry* dir_entry, dir_ll* head){
         prev=cur;
         cur=next;
     }
+
     head=prev;
+    return head;
 }
 
 // inode_idx starts from 1
 void release_all(int inode_idx){
     set_bitmap(0,inode_idx,0);
     sb->s_free_inodes_count++;
-    gdt->bg_free_blocks_count;
+    gdt->bg_free_blocks_count++;
     struct ext2_inode* current = &inode_table[inode_idx-1];
+    if (current->i_mode & EXT2_S_IFDIR){
+        gdt->bg_used_dirs_count--;
+    }
     int block_used = current->i_blocks/2;
     for (int i=0;i<block_used;i++){
         set_bitmap(1,current->i_block[i],0);
@@ -53,11 +61,13 @@ void release_all(int inode_idx){
         gdt->bg_free_blocks_count++;
     }
     if (current->i_mode & EXT2_S_IFDIR){
-        dir_ll* head = NULL;
-        struct ext2_dir_entry* dir_ent = (struct ext2_dir_entry*) (disk + EXT2_BLOCK_SIZE*current->i_block[0]);
-        constrcut_dir_ll_spe(dir_ent,head);
 
-        while(head!=NULL){
+        dir_ll* head= NULL;
+
+        struct ext2_dir_entry* dir_ent = (struct ext2_dir_entry*) (disk + EXT2_BLOCK_SIZE*current->i_block[0]);
+        head = constrcut_dir_ll_spe(dir_ent, head);
+
+        while(head!=NULL && (strncmp(head->dir_ent->name, ".", 1)!=0) && (strncmp(head->dir_ent->name, "..", 2)!=0)){
             release_all(head->dir_ent->inode);
             head=head->next;
         }
@@ -92,6 +102,7 @@ int main(int argc, char **argv) {
         }
         loop->dir_ent->rec_len+=loop->next->dir_ent->rec_len;
         release_all(loop->next->dir_ent->inode);
+        return 0;
     }
 
     if (strncmp(dir_ent->name, name, dir_ent->name_len)==0){

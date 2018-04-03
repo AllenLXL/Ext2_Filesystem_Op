@@ -83,5 +83,3 @@ int check_files_in_dir(int inode_idx);
 int check_blocks(int inode_idx);
 int get_bitmap(int bm_idx, int idx);
 #endif //A4_EXT2_UTILS_H
-
-
