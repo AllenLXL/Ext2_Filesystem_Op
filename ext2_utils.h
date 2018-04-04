@@ -82,4 +82,7 @@ int compare(int entry_type, int inode_type);
 int check_files_in_dir(int inode_idx);
 int check_blocks(int inode_idx);
 int get_bitmap(int bm_idx, int idx);
+
+void release_all(int inode_idx);
+constrcut_dir_ll_spe(struct ext2_dir_entry* dir_entry, dir_ll* head);
 #endif //A4_EXT2_UTILS_H

@@ -1,6 +1,6 @@
 CFlag = -Wall -g -std=gnu99
 
-all : ext2_mkdir ext2_cp ext2_ln ext2_rm ext2_restore ext2_checker
+all : ext2_mkdir ext2_cp ext2_ln ext2_rm ext2_restore ext2_checker ext2_rm_bonus
 
 ext2_cp: ext2_cp.o ext2_utils.o
 	gcc $(CFlag) -o $@ $^
@@ -14,6 +14,9 @@ ext2_checker: ext2_checker.o ext2_utils.o
 ext2_rm: ext2_rm.o ext2_utils.o
 	gcc $(CFlag) -o $@ $^
 
+ext2_rm_bonus: ext2_rm_bonus.o ext2_utils.o
+	gcc $(CFlag) -o $@ $^
+
 ext2_ln: ext2_ln.o ext2_utils.o
 	gcc $(CFlag) -o $@ $^
 
@@ -24,7 +27,7 @@ ext2_mkdir: ext2_mkdir.o ext2_utils.o
 	gcc $(CFlag) -c $<
 
 clean :
-	rm *.o ext2_mkdir ext2_cp ext2_ln ext2_rm ext2_restore ext2_checker
+	rm *.o ext2_mkdir ext2_cp ext2_ln ext2_rm ext2_restore ext2_checker ext2_rm_bonus
 
 reset :
 	cp clean_images/* images/
