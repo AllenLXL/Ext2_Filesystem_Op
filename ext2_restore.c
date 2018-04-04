@@ -1,4 +1,13 @@
 #include "ext2_utils.h"
+int get_rec_len(struct ext2_dir_entry* dir_ent){
+    int result = 8;
+    result+=dir_ent->name_len;
+    while (result%4!=0){
+        result++;
+    }
+    return result;
+}
+
 
 int main(int argc, char** argv){
     if (argc != 3) {
@@ -16,23 +25,12 @@ int main(int argc, char** argv){
     char* name = get_last_name(first_front);
 
     struct ext2_dir_entry* dir_ent = get_parent_dir_block(first_front);
-    int type = check_type(dir_ent, name);
-//    /*if (!type){
-//        fprintf(stderr, "File to delete not exist\n");
-//        exit(ENOENT);
-//    } else */
-    if (type==2){
-        fprintf(stderr, "Cannot restore a directory\n");
-        exit(EISDIR);
-    }
-
-//    struct ext2_inode* parent_inode = &inode_table[dir_ent->inode-1];
-
 
     if (strncmp(dir_ent->name, name, dir_ent->name_len)==0){
         fprintf(stderr, "It cannot be restored.\n");
-        return 0;
+        exit(1);
     }
+
     dir_ll_head=NULL;
     constrcut_dir_ll(dir_ent);
     dir_ll* loop = dir_ll_head;
@@ -45,18 +43,16 @@ int main(int argc, char** argv){
         if(loop->dir_ent->rec_len - (8+loop->dir_ent->name_len) <= 3){
             loop=loop->next;
         } else{
-            int padding=0;
-            int name_len = loop->dir_ent->name_len;
-            while (name_len%4!=0){
-                padding++;
-                name_len++;
+            int rec_len=get_rec_len(loop->dir_ent);
+
+
+            struct ext2_dir_entry* candidate = (void*)loop->dir_ent + (rec_len);
+            while (strncmp(candidate->name, name, candidate->name_len)!=0){
+                int true_rec_len = get_rec_len(candidate);
+                candidate = (void*) candidate + true_rec_len;
             }
-//            int offset = (8+loop->dir_ent->name_len+padding);
-//            struct ext2_dir_entry* prev = loop->dir_ent;
-//            prev->rec_len= (8 + padding + prev->name_len);
-            struct ext2_dir_entry* candidate = (void*)loop->dir_ent + (8+loop->dir_ent->name_len+padding);
             if (strncmp(candidate->name, name, candidate->name_len)==0){
-                loop->dir_ent->rec_len= (unsigned short) (8 + loop->dir_ent->name_len + padding);
+                loop->dir_ent->rec_len= (unsigned short) (rec_len);
                 int rs_inode_idx = candidate->inode;
                 struct ext2_inode* rs_inode = &inode_table[rs_inode_idx-1];
                 rs_inode->i_links_count++;
