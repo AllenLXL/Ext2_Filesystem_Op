@@ -1,9 +1,9 @@
-//
-// Created by LiAllen on 2018-03-19.
-//
+/*
+ * Implementing ln liked operations
+ * Created by LiAllen on 2018-03-19.
+ */
 
 #include "ext2_utils.h"
-
 
 int main(int argc, char **argv) {
     if (argc != 4 && argc !=5) {
@@ -83,5 +83,10 @@ int main(int argc, char **argv) {
         new_add->inode = link->inode;
         inode_table[new_add->inode-1].i_links_count++;
     }
+    // free all malloc data
+    free_ll(first_front);
+    free_ll(second_front);
+    free(name_1);
+    free(name_2);
     return 0;
 }

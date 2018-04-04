@@ -16,15 +16,15 @@ int main(int argc, char** argv){
     char* name = get_last_name(first_front);
 
     struct ext2_dir_entry* dir_ent = get_parent_dir_block(first_front);
-//    int type = check_type(dir_ent, name);
+    int type = check_type(dir_ent, name);
 //    /*if (!type){
 //        fprintf(stderr, "File to delete not exist\n");
 //        exit(ENOENT);
 //    } else */
-//    if (type==2){
-//        fprintf(stderr, "Cannot restore a directory\n");
-//        exit(EISDIR);
-//    }
+    if (type==2){
+        fprintf(stderr, "Cannot restore a directory\n");
+        exit(EISDIR);
+    }
 
 //    struct ext2_inode* parent_inode = &inode_table[dir_ent->inode-1];
 
