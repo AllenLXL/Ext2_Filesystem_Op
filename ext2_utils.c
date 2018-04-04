@@ -1,4 +1,6 @@
-
+/*
+ * All helper functions' implementations are here.
+ */
 #include "ext2_utils.h"
 
 //TODO====================================================
@@ -140,8 +142,9 @@
 //TODO====================================================
 
 /*
- * This function is for initialize all necessary pointer for every operations.
+ * This function is for initialize all necessary pointer for each operation.
  * On success return image file descriptor, o.w. exit.
+ * Initialized variables are all global.
  */
 void init_ptrs(char* img_file){
     int fd = open(img_file, O_RDWR);
@@ -162,9 +165,10 @@ void init_ptrs(char* img_file){
     inode_bm = disk + (EXT2_BLOCK_SIZE * gdt->bg_inode_bitmap);
     inode_table = (struct ext2_inode *)(disk + EXT2_BLOCK_SIZE * gdt->bg_inode_table);
 }
+
 /*
  * This function is used for finding a free inode in inode bitmap.
- * If there is no free inode now, return -1 indicating error.
+ * If there is no free inode now, exit 1 and print error msg to stderr.
  */
 int find_free_inode(){
     int idx = 0;
@@ -177,12 +181,14 @@ int find_free_inode(){
             }
         }
     }
-    return -1;
+    // code reaches here indicates error.
+    fprintf(stderr, "No more available inode.\n");
+    exit(1);
 }
 
 /*
  * This function is used for finding a free block in block bitmap.
- * If there is no free block now, return -1 indicating error.
+ * If there is no free block now, exit 1 and print error msg to stderr.
  */
 int find_free_block(){
     int idx = 0;
@@ -195,7 +201,9 @@ int find_free_block(){
             }
         }
     }
-    return -1;
+    // code reaches here indicates error.
+    fprintf(stderr, "No more available block.\n");
+    exit(1);
 }
 
 /*
@@ -232,7 +240,9 @@ void set_bitmap(int bm_idx ,int idx, int mode){
     }
 }
 
-
+/*
+ * Convert path to a linked list, so we can do more versatile operations.
+ */
 void construct_ll(char* path, ll** link_list){
     *link_list = NULL;
 
@@ -260,6 +270,9 @@ void construct_ll(char* path, ll** link_list){
     }
 }
 
+/*
+ * Return link list's length
+ */
 int get_ll_length(ll* head){
     ll* temp = head;
     int result = 0;
@@ -270,12 +283,10 @@ int get_ll_length(ll* head){
     return result;
 }
 
-
 /*
  * This is a helper function for check if a given path is abs.
  * NOTE path should be null terminated.
  * On success return 1. o.w. exit.
- * If valid, we remove last / if exist.
  */
 void validate_path(char* path){
     if (path[0]!='/'){
@@ -284,7 +295,9 @@ void validate_path(char* path){
     }
 }
 
-
+/*
+ * Return parent's first directory entry given a link_listed path.
+ */
 struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head){
     struct ext2_inode* current = &inode_table[EXT2_ROOT_INO - 1];
     struct ext2_dir_entry * dir_entry = (struct ext2_dir_entry *)(disk + current->i_block[0]*EXT2_BLOCK_SIZE);
@@ -295,6 +308,7 @@ struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head){
 
     int k = 0;
     int j=0;
+    // loop to second last link list node
     for (int i = 0; i < ll_length - 1; i++){
         while (current->i_block[j]!=0){
             while (k < EXT2_BLOCK_SIZE) {
@@ -304,11 +318,13 @@ struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head){
                     if (i==ll_length-2){
                         return dir_entry;
                     }
+                    // reset k
                     k=0;
                     current_node=current_node->next;
                     i++;
                 } else{
                     k += dir_entry->rec_len;
+                    // directory updates
                     dir_entry = (void*)(dir_entry) + dir_entry -> rec_len;
                 }
             }
@@ -319,6 +335,7 @@ struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head){
     if (ll_length==1){
         return dir_entry;
     }
+    // code reaches here indicates error
     fprintf(stderr, "file or directory not exist\n");
     exit(ENOENT);
 }
@@ -343,12 +360,15 @@ struct ext2_dir_entry* get_dir_ent(struct ext2_dir_entry* loop_ent, char* name){
     exit(ENOENT);
 }
 
-// return newly added dir_ent
+/*
+ * Add a new directory entry to parent folder.
+ * with name and type (DIR/REG/LINK)
+ * Return newly added entry.
+ */
 struct ext2_dir_entry* add_parent_block(struct ext2_dir_entry* dir_entry, char* name, int type){
     struct ext2_inode* inode = &inode_table[dir_entry->inode-1];
     struct ext2_dir_entry* new_dir;
-//    print_dir_block(dir_entry);
-//    struct ext2_dir_entry * temp = dir_entry;
+
     int k =0;
     while (k < EXT2_BLOCK_SIZE) {
         if (k+dir_entry->rec_len == EXT2_BLOCK_SIZE){
@@ -365,13 +385,11 @@ struct ext2_dir_entry* add_parent_block(struct ext2_dir_entry* dir_entry, char* 
         k += dir_entry->rec_len;
         dir_entry = (void*)(dir_entry) + dir_entry -> rec_len;
     }
-    int last_padding = EXT2_BLOCK_SIZE - k - 8 - dir_entry->name_len;
 
+    int last_padding = EXT2_BLOCK_SIZE - k - 8 - dir_entry->name_len;
+    // find last dir entry now
     if (last_padding < (strlen(name)+8)){
-        if (sb->s_free_blocks_count < 1) {
-            fprintf(stderr, "No block available");
-            exit(1);
-        }
+
         inode->i_blocks += 2;
         inode->i_size+=EXT2_BLOCK_SIZE;
         int free_block_idx = find_free_block() + 1;
@@ -428,12 +446,13 @@ void constrcut_dir_ll(struct ext2_dir_entry* dir_entry){
 
 void init_inode(struct ext2_inode* new_inode){
     // the following are trivial staff
+    // by ext2.h we should init them to 0
     new_inode->i_gid = 0;
     new_inode->i_uid = 0;
     new_inode->osd1 = 0;
     new_inode->i_generation = 0;
-    new_inode->i_file_acl = 0;    /* File ACL */
-    new_inode->i_dir_acl = 0;     /* Directory ACL */
+    new_inode->i_file_acl = 0;
+    new_inode->i_dir_acl = 0;
     new_inode->i_faddr = 0;
     new_inode->i_dtime=0;
     new_inode->i_ctime= (unsigned int) time(NULL);
@@ -443,25 +462,12 @@ void init_inode(struct ext2_inode* new_inode){
     for(int i =0;i<15;i++){
         new_inode->i_block[i]=0;
     }
-
 }
+
 
 /*
- * name is file / dir name.
+ * Given parent directory entry and name, we determine its type.
  */
-void check_existence(struct ext2_dir_entry* first_dir_ent , char* name){
-    int k = 0;
-    while (k < EXT2_BLOCK_SIZE) {
-        if ((strncmp(name, first_dir_ent->name, first_dir_ent->name_len)==0)) {
-            fprintf(stderr, "File or directory already exists.");
-            exit(EEXIST);
-        }
-        k += first_dir_ent->rec_len;
-        first_dir_ent = (void*)(first_dir_ent) + first_dir_ent -> rec_len;
-    }
-}
-
-//
 int check_type(struct ext2_dir_entry* first_dir_ent , char* name){
     int k = 0;
     struct ext2_inode* inode = &inode_table[first_dir_ent->inode-1];
@@ -498,19 +504,6 @@ char* get_last_name(ll* ll_head){
     strncpy(result, loop->name, (size_t) loop->name_len);
     return result;
 }
-
-// TODO remember to free result
-char* get_sec_last_name(ll* ll_head, int ll_length){
-    ll* loop = ll_head;
-    for (int i = 0; i < ll_length - 1; i++){
-        loop=loop->next;
-    }
-    char* result = malloc((loop->name_len+1)* sizeof(char));
-    memset(result, '\0', (loop->name_len+1));
-    strncpy(result, loop->name, (size_t) loop->name_len);
-    return result;
-}
-
 
 int compare(int entry_type, int inode_type){
     if (entry_type != EXT2_FT_REG_FILE && (inode_type & EXT2_S_IFREG)){
@@ -578,9 +571,6 @@ int get_bitmap(int bm_idx, int idx){
         }
     }
     return -1;
-    // code reach here indicates error
-//    fprintf(stderr, "Invalid block/inode index\n");
-//    exit(1);
 }
 
 int check_blocks(int inode_idx){
@@ -614,7 +604,7 @@ int check_blocks(int inode_idx){
         }
     }
     if (errors){
-        printf("Fixed: %d in-use data blocks not marked in data bitmap for inode: [%d]\n", errors, inode_idx);
+        printf("Fixed: %d in-use data blocks not marked in data bitmap for inode: [%d]\n", errors, inode_idx+1);
     }
 
     return errors;
@@ -657,7 +647,10 @@ dir_ll* constrcut_dir_ll_spe(struct ext2_dir_entry* dir_entry, dir_ll* head){
     return head;
 }
 
-// inode_idx starts from 1
+/*
+ * inode_idx starts from 1
+ * This function recrsive delete everything underlying this inode if possible (DIR)
+ */
 void release_all(int inode_idx){
 //    printf("===> %d\n", inode_idx);
 
@@ -695,5 +688,30 @@ void release_all(int inode_idx){
                 head=head->next;
             }
         }
+    }
+}
+
+/*
+ * Free link list structures used in operation.
+ * this link list is for path
+ */
+void free_ll(ll* head){
+    while (head != NULL){
+        free(head->name);
+        ll* temp = head->next;
+        free(head);
+        head = temp;
+    }
+}
+
+/*
+ * Free link list structures used in operation.
+ * this link list is for dir ent
+ */
+void free_dir_ll(dir_ll* head){
+    while (head != NULL){
+        dir_ll* temp = head->next;
+        free(head);
+        head = temp;
     }
 }

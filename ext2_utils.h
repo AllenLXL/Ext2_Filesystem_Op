@@ -59,7 +59,6 @@ char* convert_path(char* path);
 char* get_new_dir_name(char* path);
 
 
-unsigned int modify_parent_block();
 
 struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head);
 
@@ -68,7 +67,6 @@ void check_existence(struct ext2_dir_entry* first_dir_ent, char* name);
 int get_ll_length(ll* head);
 char* get_last_name(ll* ll_head);
 
-char* get_sec_last_name(ll* ll_head, int ll_lenth);
 
 struct ext2_dir_entry* add_parent_block(struct ext2_dir_entry* dir_entry, char* name, int type);
 
@@ -84,5 +82,8 @@ int check_blocks(int inode_idx);
 int get_bitmap(int bm_idx, int idx);
 
 void release_all(int inode_idx);
-constrcut_dir_ll_spe(struct ext2_dir_entry* dir_entry, dir_ll* head);
+dir_ll*constrcut_dir_ll_spe(struct ext2_dir_entry* dir_entry, dir_ll* head);
+
+void free_ll(ll* head);
+void free_dir_ll(dir_ll* head);
 #endif //A4_EXT2_UTILS_H

@@ -5,7 +5,6 @@
 
 #include "ext2_utils.h"
 
-
 int main(int argc, char **argv) {
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <image file name> <abs path of ext2>\n", argv[0]);
@@ -57,14 +56,15 @@ int main(int argc, char **argv) {
     loop->dir_ent->rec_len+=loop->next->dir_ent->rec_len;
 
     int rm_inode_idx=loop->next->dir_ent->inode;
-    set_bitmap(0, rm_inode_idx, 0);
-    sb->s_free_inodes_count++;
-    gdt->bg_free_inodes_count++;
+
     // situation for hard link
     struct ext2_inode* deleted = &inode_table[rm_inode_idx-1];
     if (deleted->i_links_count>1){
         deleted->i_links_count--;
     }
+    set_bitmap(0, rm_inode_idx, 0);
+    sb->s_free_inodes_count++;
+    gdt->bg_free_inodes_count++;
 
     for (int i=0; i<inode_table[rm_inode_idx-1].i_blocks/2&&i<12;i++){
         set_bitmap(1, inode_table[rm_inode_idx-1].i_block[i], 0);

@@ -8,13 +8,11 @@ int main(int argc, char **argv) {
     init_ptrs(argv[1]);
     int change = 0;
 
-
-    // check if imode match file_type. If an Inode in inode_table
-    // is a directory, we check everything under that folder.
-
     // traverse all dir to check all dir ent, trust inode->imode
     for (int j = 0; j < sb->s_inodes_count; j++) {
         if (j == EXT2_ROOT_INO - 1 || j > EXT2_GOOD_OLD_FIRST_INO) {
+            // if inode table[j] is a directory, we check every directory entry
+            // under that folder to see if that directory entry match inode.
             if (inode_table[j].i_mode & EXT2_S_IFDIR) {
                 change += check_files_in_dir(j);
             }
@@ -27,6 +25,9 @@ int main(int argc, char **argv) {
 //    unsigned short dir_num =0;
     for (int i = 0; i < sb->s_inodes_count; i++) {
         if (i == EXT2_ROOT_INO - 1 || i > EXT2_GOOD_OLD_FIRST_INO) {
+            // if inode_table[i] is a directory/file/link, I check 
+            // the inode bitmap to see if bitmap of it is 1. If not,
+            // correct it.
             if (inode_table[i].i_size > 0) {
                 if (get_bitmap(0, i + 1) != 1) {
                     change += 1;
@@ -40,6 +41,7 @@ int main(int argc, char **argv) {
 //                dir_num++;
 //            }
         } else {
+            // reserved block set to 1 if it's originally 0.
             if (get_bitmap(0, i + 1) != 1) {
                 change += 1;
                 set_bitmap(0, i + 1, 1);
@@ -51,6 +53,8 @@ int main(int argc, char **argv) {
 //        gdt->bg_used_dirs_count=dir_num;
 
         // update superblock and block group counters, trust bitmap
+        // loop over block bitmap and inode bitmap to find the block in use and 
+        // inode in use.
         int block_num = 0;
         for (int byte = 0; byte < sb->s_blocks_count / 8; byte++) {
             for (int bit = 0; bit < 8; bit++) {
@@ -68,8 +72,8 @@ int main(int argc, char **argv) {
                 }
             }
         }
-        // adjust blocks & inodes numbers.
-
+        // adjust blocks & inodes numbers by compare the actual free blocks and superblock
+        // and block group table's free blocks/inodes count.
         if (block_num != sb->s_free_blocks_count) {
             change = abs((int)sb->s_free_blocks_count - block_num);
             sb->s_free_blocks_count = (unsigned int) block_num;
@@ -95,7 +99,8 @@ int main(int argc, char **argv) {
 
 
 
-        // chcek d time
+        // check d time by loop over inode tables. change every file, directory, and links'
+        // dtime to 0 if it's originally 1.
         for (int k = 0; k < sb->s_inodes_count; k++) {
 //            if (i == EXT2_ROOT_INO - 1 || i >= EXT2_GOOD_OLD_FIRST_INO) {
                 if (((inode_table[k].i_mode & EXT2_S_IFREG) || (inode_table[k].i_mode & EXT2_S_IFDIR) ||
@@ -107,7 +112,7 @@ int main(int argc, char **argv) {
 //            }
         }
 
-        // check block, do not trust block bm
+        // loop over inode table to make sure each blocks use by inode mark as inuse in block bitmap.
         for (int l = 0; l < sb->s_inodes_count; l++) {
 //            if (l == EXT2_ROOT_INO - 1 || l >= EXT2_GOOD_OLD_FIRST_INO) {
                 if (inode_table[l].i_size > 0) {
@@ -115,10 +120,10 @@ int main(int argc, char **argv) {
                 }
 //            }
         }
-        if (!change) {
+    }
+    if (!change) {
             printf("No file system inconsistencies detected!\n");
         } else{
             printf("%d file system inconsistencies repaired!\n", change);
         }
-    }
 }
