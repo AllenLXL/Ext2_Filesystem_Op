@@ -1,21 +1,21 @@
 #include "ext2_utils.h"
 
 int main(int argc, char **argv) {
+    // trivial stuff
     if(argc != 3) {
         fprintf(stderr, "Usage: %s <image file name> <abs path of ext2 file sys>", argv[0]);
         exit(1);
     }
-
+    // some trivial stuff as well...
     validate_path(argv[2]);
-
     init_ptrs(argv[1]);
-
     construct_ll(argv[2], &first_front);
 
+    // get new dir name
     char* target_name = get_last_name(first_front);
     struct ext2_dir_entry* dir_entry = get_parent_dir_block(first_front);
     int res = check_type(dir_entry, target_name);
-    if (res > 0){
+    if (res > 0){ // check if target name already exist in pathed img
         fprintf(stderr, "File or directory already exists.");
         exit(EEXIST);
     }
@@ -24,17 +24,18 @@ int main(int argc, char **argv) {
     int free_inode_idx = find_free_inode() + 1;
     int free_block_idx = find_free_block() + 1;
 
+    // new inode for new dir
     struct ext2_inode* new_inode = &inode_table[free_inode_idx - 1];
     init_inode(new_inode);
     new_inode->i_mode = EXT2_S_IFDIR;
     new_inode->i_size = EXT2_BLOCK_SIZE;
     new_inode->i_links_count += 2;
     new_inode->i_blocks += 2;
-
     new_inode->i_block[0] = (unsigned int) free_block_idx;
 
     unsigned int inode_idx = dir_entry->inode-1;
 
+    // add a dir ent to parent dir
     struct ext2_dir_entry* new_dir = add_parent_block(dir_entry, target_name, EXT2_FT_DIR);
     new_dir->inode= (unsigned int) free_inode_idx;
 
@@ -54,6 +55,7 @@ int main(int argc, char **argv) {
     parent_dir->file_type = EXT2_FT_DIR;
     strncpy(parent_dir->name, "..", 2);
 
+    // since a new dir
     inode_table[inode_idx].i_links_count++;
 
 
@@ -69,5 +71,9 @@ int main(int argc, char **argv) {
     gdt->bg_free_inodes_count--;
     gdt->bg_free_blocks_count--;
     gdt->bg_used_dirs_count++;
+
+    // free all malloc data
+    free_ll(first_front);
+    free(target_name);
     return 0;
 }
