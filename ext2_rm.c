@@ -4,14 +4,6 @@
  */
 
 #include "ext2_utils.h"
-int get_rec_len(struct ext2_dir_entry* dir_ent){
-    int result = 8;
-    result+=dir_ent->name_len;
-    while (result%4!=0){
-        result++;
-    }
-    return result;
-}
 
 int main(int argc, char **argv) {
     // trivial init stuff

@@ -1,3 +1,8 @@
+/*
+ * Implementing fixing inconsistency operation
+ * Created by LiAllen on 2018-03-19.
+ */
+
 #include "ext2_utils.h"
 
 int main(int argc, char **argv) {

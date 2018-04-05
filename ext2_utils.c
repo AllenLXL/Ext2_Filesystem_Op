@@ -346,6 +346,7 @@ void init_inode(struct ext2_inode* new_inode){
     new_inode->i_ctime= (unsigned int) time(NULL);
     // other necessary attributes
     new_inode->i_blocks=0;
+    new_inode->i_size=0;
     new_inode->i_links_count=0;
     for(int i =0;i<15;i++){
         new_inode->i_block[i]=0;
@@ -579,26 +580,36 @@ dir_ll* constrcut_dir_ll_spe(struct ext2_dir_entry* dir_entry, dir_ll* head){
  * NOTE this is a special case used for rm bonus!
  */
 void release_all(int inode_idx){
+//    printf("==> %d\n", inode_idx);
+    struct ext2_inode* current = &inode_table[inode_idx-1];
+    if (current->i_links_count>1 && (current->i_mode&EXT2_S_IFREG)){
+        current->i_links_count--;
+        return;
+    }
     // first delete this inode itself.
     set_bitmap(0,inode_idx,0);
     sb->s_free_inodes_count++;
     gdt->bg_free_inodes_count++;
 
     // minus used dir counter
-    struct ext2_inode* current = &inode_table[inode_idx-1];
     if (current->i_mode & EXT2_S_IFDIR){
         gdt->bg_used_dirs_count--;
     }
     int block_used = current->i_blocks/2;
-    for (int i=0;i<block_used;i++){
+    for (int i=0;i<block_used&&i<12;i++){
+//        printf("==inode_idx is %d, block_idx is %d\n", inode_idx, current->i_block[i]);
         set_bitmap(1,current->i_block[i],0);
         sb->s_free_blocks_count++;
         gdt->bg_free_blocks_count++;
     }
     // consider indirection
     if (block_used>12){
-        int* indirection = (int *)(disk + current->i_block[12]*EXT2_BLOCK_SIZE);
+        int* indirection = (void *)(disk + current->i_block[12]*EXT2_BLOCK_SIZE);
+        set_bitmap(1,current->i_block[12],0);
+        sb->s_free_blocks_count++;
+        gdt->bg_free_blocks_count++;
         for (int i=0; i< block_used-13;i++){
+//            printf("==inode_idx is %d, block_idx is %d\n", inode_idx, indirection[i]);
             set_bitmap(1,indirection[i],0);
             sb->s_free_blocks_count++;
             gdt->bg_free_blocks_count++;
@@ -606,6 +617,7 @@ void release_all(int inode_idx){
     }
 
     // then delete everything under this folder
+    current->i_size=0;
     if (current->i_mode & EXT2_S_IFDIR){
         dir_ll* head= NULL;
         struct ext2_dir_entry* dir_ent = (struct ext2_dir_entry*) (disk + EXT2_BLOCK_SIZE*current->i_block[0]);
