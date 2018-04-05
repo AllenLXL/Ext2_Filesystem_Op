@@ -7,7 +7,9 @@
 int get_rec_len(struct ext2_dir_entry* dir_ent){
     int result = 8;
     result+=dir_ent->name_len;
-
+    if (dir_ent->name_len==0){
+        return 0;
+    }
     while (result%4!=0){
         result++;
     }
@@ -52,17 +54,14 @@ int main(int argc, char** argv){
         } else{
             int rec_len=get_rec_len(loop->dir_ent);
 
-            int inner_offset = get_rec_len(loop->dir_ent);
+            int inner_offset = 0; //get_rec_len(loop->dir_ent);
             struct ext2_dir_entry* candidate = (void*)loop->dir_ent + (rec_len);
 
-            while (strncmp(candidate->name, name, candidate->name_len)!=0){
-                if (candidate->name_len==0){
-                    break;
-                }
+            int extra_space = loop->dir_ent->rec_len-get_rec_len(loop->dir_ent);
+            while (strncmp(candidate->name, name, candidate->name_len)!=0 && inner_offset<extra_space){
                 int cur_rec_len = get_rec_len(candidate);
                 candidate = (void*) candidate + cur_rec_len;
                 inner_offset+=cur_rec_len;
-                break;
             }
             if (candidate->name_len==0){
                 if (loop->new_block==1){
@@ -83,15 +82,16 @@ int main(int argc, char** argv){
 //                    struct ext2_dir_entry* if_next = (void*) candidate + get_rec_len(candidate);
                     //resotre last dir ent
                     if (loop->next==NULL || loop->next->new_block==1){
-                        true_rec_len=EXT2_BLOCK_SIZE-(offset+inner_offset);
+                        true_rec_len=EXT2_BLOCK_SIZE-(offset+inner_offset+get_rec_len(loop->dir_ent));
                     } else{ // restore not last entry
-                        true_rec_len=loop->dir_ent->rec_len-inner_offset;
+                        true_rec_len=loop->dir_ent->rec_len-inner_offset-get_rec_len(loop->dir_ent);
                     }
                     candidate->rec_len= (unsigned short) true_rec_len;
-                    loop->dir_ent->rec_len= (unsigned short) (inner_offset);
+                    loop->dir_ent->rec_len= (unsigned short) (inner_offset+get_rec_len(loop->dir_ent));
                     int rs_inode_idx = candidate->inode;
                     struct ext2_inode* rs_inode = &inode_table[rs_inode_idx-1];
                     rs_inode->i_dtime= 0;
+                    rs_inode->i_links_count=1;
                     set_bitmap(0, rs_inode_idx, 1);
                     sb->s_free_inodes_count--;
                     gdt->bg_free_inodes_count--;
@@ -115,11 +115,16 @@ int main(int argc, char** argv){
                     }
                     // successfully restore!
                     return 0;
+                } else{
+                    if (loop->new_block==1){
+                        offset=0;
+                    } else{
+                        offset+=loop->dir_ent->rec_len;
+                    }
+                    loop=loop->next;
                 }
             }
         }
-
-
     }
     // code reaches here indicates it cannot restore file
     // since it cannot find it
