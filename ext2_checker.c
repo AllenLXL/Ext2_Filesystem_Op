@@ -13,36 +13,6 @@ int main(int argc, char **argv) {
     init_ptrs(argv[1]);
     int change = 0;
 
-
-    // checker 3 to you must check that its inode is marked as
-    // allocated in the inode bitmap. trust dir_ent->indoe
-    for (int i = 0; i < sb->s_inodes_count; i++) {
-        if (i == EXT2_ROOT_INO - 1 || i >= EXT2_GOOD_OLD_FIRST_INO) {
-            // if inode_table[i] is a directory/file/link, I check
-            // the inode bitmap to see if bitmap of it is 1. If not,
-            // correct it.
-            if (inode_table[i].i_size > 0) {
-                if (get_bitmap(0, i + 1) != 1) {
-                    change += 1;
-                    set_bitmap(0, i + 1, 1);
-                    sb->s_free_inodes_count--;
-                    gdt->bg_free_inodes_count--;
-                    printf("Fixed: inode [%d] not marked as in-use\n", i + 1);
-                }
-            }
-        } else {
-            // reserved block set to 1 if it's originally 0.
-            if (get_bitmap(0, i + 1) != 1) {
-                change += 1;
-                set_bitmap(0, i + 1, 1);
-                sb->s_free_inodes_count--;
-                gdt->bg_free_inodes_count--;
-                printf("Fixed: inode [%d] not marked as in-use\n", i + 1);
-            }
-        }
-    }
-
-
     // update superblock and block group counters, trust bitmap
     // loop over block bitmap and inode bitmap to find the block in use and
     // inode in use.
@@ -87,6 +57,7 @@ int main(int argc, char **argv) {
         printf("Fixed: block group's free inodes counter was off by %d compared to the bitmap\n", change);
     }
 
+
     // traverse all dir to check all dir ent, trust inode->imode
     for (int j = 0; j < sb->s_inodes_count; j++) {
         if (j == EXT2_ROOT_INO - 1 || j > EXT2_GOOD_OLD_FIRST_INO) {
@@ -98,7 +69,34 @@ int main(int argc, char **argv) {
         }
     }
 
-
+    // checker 3 to you must check that its inode is marked as
+    // allocated in the inode bitmap. trust dir_ent->indoe
+    for (int i = 0; i < sb->s_inodes_count; i++) {
+        if (i == EXT2_ROOT_INO - 1 || i >= EXT2_GOOD_OLD_FIRST_INO) {
+            // if inode_table[i] is a directory/file/link, I check
+            // the inode bitmap to see if bitmap of it is 1. If not,
+            // correct it.
+            if (inode_table[i].i_size > 0) {
+                if (get_bitmap(0, i + 1) != 1) {
+                    change += 1;
+                    set_bitmap(0, i + 1, 1);
+                    sb->s_free_inodes_count--;
+                    gdt->bg_free_inodes_count--;
+                    printf("Fixed: inode [%d] not marked as in-use\n", i + 1);
+                }
+            }
+        } else {
+            // reserved block set to 1 if it's originally 0.
+            if (get_bitmap(0, i + 1) != 1) {
+                change += 1;
+                set_bitmap(0, i + 1, 1);
+                sb->s_free_inodes_count--;
+                gdt->bg_free_inodes_count--;
+                printf("Fixed: inode [%d] not marked as in-use\n", i + 1);
+            }
+        }
+    }
+    
     // check d time by loop over inode tables. change every file, directory, and links'
     // dtime to 0 if it's originally 1.
     for (int k = 0; k < sb->s_inodes_count; k++) {

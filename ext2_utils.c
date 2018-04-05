@@ -580,7 +580,6 @@ dir_ll* constrcut_dir_ll_spe(struct ext2_dir_entry* dir_entry, dir_ll* head){
  * NOTE this is a special case used for rm bonus!
  */
 void release_all(int inode_idx){
-//    printf("==> %d\n", inode_idx);
     struct ext2_inode* current = &inode_table[inode_idx-1];
     if (current->i_links_count>1 && (current->i_mode&EXT2_S_IFREG)){
         current->i_links_count--;
@@ -597,7 +596,6 @@ void release_all(int inode_idx){
     }
     int block_used = current->i_blocks/2;
     for (int i=0;i<block_used&&i<12;i++){
-//        printf("==inode_idx is %d, block_idx is %d\n", inode_idx, current->i_block[i]);
         set_bitmap(1,current->i_block[i],0);
         sb->s_free_blocks_count++;
         gdt->bg_free_blocks_count++;
@@ -609,7 +607,6 @@ void release_all(int inode_idx){
         sb->s_free_blocks_count++;
         gdt->bg_free_blocks_count++;
         for (int i=0; i< block_used-13;i++){
-//            printf("==inode_idx is %d, block_idx is %d\n", inode_idx, indirection[i]);
             set_bitmap(1,indirection[i],0);
             sb->s_free_blocks_count++;
             gdt->bg_free_blocks_count++;
@@ -631,7 +628,10 @@ void release_all(int inode_idx){
                 head=head->next;
             }
         }
+        // free malloc data
+        free_dir_ll(head);
     }
+
 }
 
 /*
