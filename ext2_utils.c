@@ -1,145 +1,8 @@
 /*
  * All helper functions' implementations are here.
+ * Created by LiAllen on 2018-03-19.
  */
 #include "ext2_utils.h"
-
-//TODO====================================================
-/* Helper function for debugging purposes*/
-//void print_bm(){
-//    int in_use;
-////    unsigned char *bb_content = disk + (EXT2_BLOCK_SIZE * gdt->bg_block_bitmap);
-//    printf("Block bitmap: ");
-//    for (int byte = 0; byte < 16; byte++){
-//        for (int bit = 0; bit < 8; bit++){
-//            in_use = block_bm[byte] & (1 << bit);
-//            if (in_use){
-//                printf("%d", 1);
-//            } else{
-//                printf("%d", in_use);
-//            }
-//        }
-//        if (byte!=16-1){
-//            printf(" ");
-//        }
-//    }
-//    printf("\n");
-////    unsigned char *ib_content = disk + (EXT2_BLOCK_SIZE * gdt->bg_inode_bitmap);
-//    printf("Inode bitmap: ");
-//
-//    for (int byte = 0; byte < 32 / 8; byte++){
-//        for (int bit = 0; bit < 8; bit++){
-//            in_use = inode_bm[byte] & (1 << bit);
-//            if (in_use){
-//                printf("%d", 1);
-//            } else{
-//                printf("%d", in_use);
-//            }
-//        }
-//        if (byte!=4-1){
-//            printf(" ");
-//        }
-//    }
-//    printf("\nbit map printing finishing\n");
-//}
-//
-//void print_dir_block(struct ext2_dir_entry* first_row){
-//    int k = 0;
-//    while (k < EXT2_BLOCK_SIZE) {
-//        if (EXT2_FT_REG_FILE == first_row->file_type) {
-//            printf("Inode: %d rec_len: %d name_len: %d type= f name=%.*s\n",
-//                   first_row->inode, first_row->rec_len, first_row->name_len,first_row->name_len,first_row->name);
-//        }
-//        else if (EXT2_FT_DIR == first_row->file_type) {
-//            printf("Inode: %d rec_len: %d name_len: %d type= d name=%.*s\n",
-//                   first_row->inode, first_row->rec_len, first_row->name_len,first_row->name_len,first_row->name);
-//        }
-//        else if (EXT2_FT_SYMLINK == first_row->file_type) {
-//            printf("Inode: %d rec_len: %d name_len: %d type= softlink name=%.*s\n",
-//                   first_row->inode, first_row->rec_len, first_row->name_len, first_row->name_len, first_row->name);
-//        }
-//        k += first_row->rec_len;
-//        first_row = (void*)(first_row) + first_row->rec_len;
-//    }
-//    printf("print finished ================================\n");
-//}
-//
-//void print_inode(){
-//    printf("Inodes:\n");
-//    struct ext2_inode *inode = inode_table;
-//
-//    for (int i = EXT2_ROOT_INO - 1; i < sb->s_inodes_count; i++) {
-//        if (i == EXT2_ROOT_INO - 1 || i >= EXT2_GOOD_OLD_FIRST_INO) {
-//
-//            if (inode[i].i_size != 0) {
-//                if (inode[i].i_mode & EXT2_S_IFREG) { // regular
-//                    printf("[%d] type: f size: %d links: %d blocks: %d\n", i + 1, inode[i].i_size,
-//                           inode[i].i_links_count, inode[i].i_blocks);
-//                    printf("[%d] Blocks: ", i + 1);
-//                    if (inode[i].i_blocks / 2 < 12){
-//                        for (int j = 0; j < (inode[i].i_blocks / 2); j++) {
-//                            if (j!=(inode[i].i_blocks / 2)-1){
-//                                printf("%d ", inode[i].i_block[j]);
-//                            } else{
-//                                printf("%d", inode[i].i_block[j]);
-//                            }
-//                        }
-//                        printf("\n");
-//                    } else {
-//                        for (int j = 0; j < 13; j++) {
-//                            if (j!=(inode[i].i_blocks / 2)-1){
-//                                printf("%d ", inode[i].i_block[j]);
-//                            } else{
-//                                printf("%d", inode[i].i_block[j]);
-//                            }
-//                        }
-//                        int* location = (int *)(disk + EXT2_BLOCK_SIZE*inode[i].i_block[12]);
-//                        for (int k = 0; k < (inode[i].i_blocks / 2)-12-1; k++) {
-//                            if (k!=(inode[i].i_blocks / 2)-12-1-1){
-//                                printf("%d ", location[k]);
-//                            } else{
-//                                printf("%d", location[k]);
-//                            }
-//                        }
-//                        printf("\n");
-//                    }
-//                }
-//                if (inode[i].i_mode & EXT2_S_IFDIR) { // directory
-//                    printf("[%d] type: d size: %d links: %d blocks: %d\n", i + 1, inode[i].i_size,
-//                           inode[i].i_links_count, inode[i].i_blocks);
-//                    printf("[%d] Blocks: ", i + 1);
-//                    if (inode[i].i_blocks / 2 < 12){
-//                        for (int j = 0; j < (inode[i].i_blocks / 2); j++) {
-//                            if (j!=(inode[i].i_blocks / 2)-1){
-//                                printf("%d ", inode[i].i_block[j]);
-//                            } else{
-//                                printf("%d", inode[i].i_block[j]);
-//                            }
-//                        }
-//                        printf("\n");
-//                    } else {
-//                        for (int j = 0; j < 13; j++) {
-//                            if (j!=(inode[i].i_blocks / 2)-1){
-//                                printf("%d ", inode[i].i_block[j]);
-//                            } else{
-//                                printf("%d", inode[i].i_block[j]);
-//                            }
-//                        }
-//                        int* location = (int *)(disk + EXT2_BLOCK_SIZE*inode[i].i_block[12]);
-//                        for (int k = 0; k < (inode[i].i_blocks / 2)-12-1; k++) {
-//                            if (k!=(inode[i].i_blocks / 2)-12-1-1){
-//                                printf("%d ", location[k]);
-//                            } else{
-//                                printf("%d", location[k]);
-//                            }
-//                        }
-//                        printf("\n");
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
-//TODO====================================================
 
 /*
  * This function is for initialize all necessary pointer for each operation.
@@ -149,16 +12,19 @@
 void init_ptrs(char* img_file){
     int fd = open(img_file, O_RDWR);
 
+    // error checking for open img_file
     if (fd < 0){
         perror("Error opening file.");
         exit(ENOENT);
     }
-
+    // load the content from img file to disk. 128 blocks in total.
     disk = mmap(NULL, 128 * 1024, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     if(disk == MAP_FAILED) {
         perror("mmap");
         exit(1);
     }
+
+    // create link to each reserved blocks.
     sb = (struct ext2_super_block *)(disk + EXT2_BLOCK_SIZE);
     gdt = (struct ext2_group_desc *)(disk + EXT2_BLOCK_SIZE * 2);
     block_bm = disk + (EXT2_BLOCK_SIZE * gdt->bg_block_bitmap);
@@ -172,6 +38,7 @@ void init_ptrs(char* img_file){
  */
 int find_free_inode(){
     int idx = 0;
+    // loop over inode bitmap. if byte is 1 pass, if 0, return index
     for (int byte = 0; byte < sb->s_inodes_count / 8; byte++){
         for (int bit = 0; bit < 8; bit++){
             if (inode_bm[byte] & (1 << bit)){
@@ -222,7 +89,7 @@ void set_bitmap(int bm_idx ,int idx, int mode){
         num_bit = sb->s_blocks_count;
         target_bm = block_bm;
     }
-
+    // loop over each byte
     for (int byte = 0; byte < num_bit / 8; byte++){
         for (int bit = 0; bit < 8; bit++){
             if ((byte*8+bit) == idx){
@@ -242,6 +109,7 @@ void set_bitmap(int bm_idx ,int idx, int mode){
 
 /*
  * Convert path to a linked list, so we can do more versatile operations.
+ * All linked list nodes are malloced
  */
 void construct_ll(char* path, ll** link_list){
     *link_list = NULL;
@@ -249,6 +117,7 @@ void construct_ll(char* path, ll** link_list){
     int length = (int) strlen(path);
     int dir_length = 0;
     for(int i = length - 1; i >= 1; i--){
+        // handle last trailing slash problem
         if (path[i] != '/'){
             dir_length++;
         } else{
@@ -259,6 +128,7 @@ void construct_ll(char* path, ll** link_list){
                 dir_length++;
                 i--;
             }
+            // put a new node
             ll* ll_node = malloc(sizeof(ll));
             ll_node->name = malloc((dir_length+1)* sizeof(char));
             memset(ll_node->name, '\0', dir_length+1);
@@ -340,15 +210,20 @@ struct ext2_dir_entry* get_parent_dir_block(ll* link_list_head){
     exit(ENOENT);
 }
 
+/*
+ * find a file or directory or link in a folder and return it's
+ * directory entry.
+ */
 struct ext2_dir_entry* get_dir_ent(struct ext2_dir_entry* loop_ent, char* name){
     struct ext2_inode* parent_inode = &inode_table[loop_ent->inode - 1];
 
     int k = 0;
     int j=0;
+    // loop over each block
     while (parent_inode->i_block[j]!=0){
         while (k < EXT2_BLOCK_SIZE) {
             if ((strncmp(loop_ent->name, name, (size_t) loop_ent->name_len) == 0)) {
-                return loop_ent;
+                return loop_ent;    // find it
             }
             k += loop_ent->rec_len;
             loop_ent = (void*)(loop_ent) + loop_ent -> rec_len;
@@ -356,6 +231,7 @@ struct ext2_dir_entry* get_dir_ent(struct ext2_dir_entry* loop_ent, char* name){
         j++;
         k=0;
     }
+    // code reaches here indicates error
     fprintf(stderr, "file or directory not exist\n");
     exit(ENOENT);
 }
@@ -369,12 +245,14 @@ struct ext2_dir_entry* add_parent_block(struct ext2_dir_entry* dir_entry, char* 
     struct ext2_inode* inode = &inode_table[dir_entry->inode-1];
     struct ext2_dir_entry* new_dir;
 
+    // find last block.
     int k =0;
     while (k < EXT2_BLOCK_SIZE) {
         if (k+dir_entry->rec_len == EXT2_BLOCK_SIZE){
             int begin = k;
             int row_len = 8 + dir_entry->name_len;
             k+=row_len;
+            // make it is divisible by 4
             while ((row_len)%4!=0){
                 row_len++;
                 k++;
@@ -389,7 +267,7 @@ struct ext2_dir_entry* add_parent_block(struct ext2_dir_entry* dir_entry, char* 
     int last_padding = EXT2_BLOCK_SIZE - k - 8 - dir_entry->name_len;
     // find last dir entry now
     if (last_padding < (strlen(name)+8)){
-
+        // no enough space in this block
         inode->i_blocks += 2;
         inode->i_size+=EXT2_BLOCK_SIZE;
         int free_block_idx = find_free_block() + 1;
@@ -402,6 +280,7 @@ struct ext2_dir_entry* add_parent_block(struct ext2_dir_entry* dir_entry, char* 
     } else{
         new_dir = (struct ext2_dir_entry *)(disk + inode->i_block[0]*EXT2_BLOCK_SIZE+k);
     }
+    // assign name and other attr
     new_dir->name_len= (unsigned char) strlen(name);
     strncpy(new_dir->name, name, strlen(name));
     new_dir->rec_len= (unsigned short) (EXT2_BLOCK_SIZE - k);
@@ -409,12 +288,16 @@ struct ext2_dir_entry* add_parent_block(struct ext2_dir_entry* dir_entry, char* 
     return new_dir;
 }
 
+/* Given the first directory entry and construct a linked list which
+ * contains a directory entry and a pointer to next directory entry.
+*/
 void constrcut_dir_ll(struct ext2_dir_entry* dir_entry){
     struct ext2_inode* inode = &inode_table[dir_entry->inode-1];
 
     dir_ll_head=NULL;
     dir_ll* cur_dir_ll; // loop invariant
     int k =0;
+    // put every new node to head and link it to original head.
     for (int i=0; i < inode->i_blocks/2;i++){
         k=0;
         dir_entry= (struct ext2_dir_entry *) (disk + EXT2_BLOCK_SIZE * inode->i_block[i]);
@@ -423,6 +306,7 @@ void constrcut_dir_ll(struct ext2_dir_entry* dir_entry){
             cur_dir_ll->dir_ent=dir_entry;
             cur_dir_ll->next=dir_ll_head;
             dir_ll_head = cur_dir_ll;
+            // indication if it is on new block
             if (k==0){
                 cur_dir_ll->new_block=1;
             } else{
@@ -474,10 +358,14 @@ void init_inode(struct ext2_inode* new_inode){
  */
 int check_type(struct ext2_dir_entry* first_dir_ent , char* name){
     int k = 0;
+    // find the inode in inode table
     struct ext2_inode* inode = &inode_table[first_dir_ent->inode-1];
     int has_reg = 0;
     int has_dir = 0;
     int has_link = 0;
+
+    // find a file in a folder. since no duplicate name, only 1 can be
+    // found.
     for (int i=0; i < (inode->i_blocks/2); i++) {
         while (k < EXT2_BLOCK_SIZE) {
             if ((strncmp(name, first_dir_ent->name, first_dir_ent->name_len) == 0)) {
@@ -494,10 +382,13 @@ int check_type(struct ext2_dir_entry* first_dir_ent , char* name){
             first_dir_ent = (void *) (first_dir_ent) + first_dir_ent->rec_len;
         }
     }
+    // returned result can be only 0 1 2 3.
     return has_dir+has_reg+has_link;
 }
 
-// TODO remember to free result
+/*
+ * return the last file/directory name in a name linked list.
+ */
 char* get_last_name(ll* ll_head){
     ll* loop = ll_head;
     while (loop->next!=NULL){
@@ -509,6 +400,10 @@ char* get_last_name(ll* ll_head){
     return result;
 }
 
+/*
+ * compare entry type and inode type, if they are both the same type,
+ *  return 1 ow return 0.
+ */
 int compare(int entry_type, int inode_type){
     if (entry_type != EXT2_FT_REG_FILE && (inode_type & EXT2_S_IFREG)){
         return 1;
@@ -520,9 +415,11 @@ int compare(int entry_type, int inode_type){
     return 0;
 }
 
-// check every file in a directory if their file_type is equal to
-// imode in inode table. If there's an error, correct it, and return
-// the total number of change.
+/*
+ * check every file in a directory if their file_type is equal to
+ * imode in inode table. If there's an error, correct it, and return
+ * the total number of change.
+ */
 int check_files_in_dir(int inode_idx){
     struct ext2_dir_entry *current = (struct ext2_dir_entry *)(disk + inode_table[inode_idx].i_block[0] * EXT2_BLOCK_SIZE);
 
@@ -531,16 +428,18 @@ int check_files_in_dir(int inode_idx){
     int errors = 0;
     dir_ll* current_node = dir_ll_head;
     while (current_node != NULL) {
-//        printf("====> %d, ll length is %d ===\n",current_node->dir_ent->inode-1, get_ll_length(dir_ll_head));
         if (compare(current_node->dir_ent->file_type, inode_table[current_node->dir_ent->inode-1].i_mode)){
+            // if compare return 1, then there's different.
             if (inode_table[current_node->dir_ent->inode - 1].i_mode & EXT2_S_IFREG) {
                 current_node->dir_ent->file_type = EXT2_FT_REG_FILE;
             } else if (inode_table[current_node->dir_ent->inode - 1].i_mode & EXT2_S_IFDIR){
                 current_node->dir_ent->file_type = EXT2_FT_DIR;
+                // add used dir count
                 gdt->bg_used_dirs_count++;
             } else if  (inode_table[current_node->dir_ent->inode - 1].i_mode & EXT2_S_IFLNK){
                 current_node->dir_ent->file_type = EXT2_FT_SYMLINK;
             }
+            // print out fixed contents
             printf("Fixed: Entry type vs inode mismatch: inode [%d]\n", current_node->dir_ent->inode);
             errors += 1;
         }
@@ -554,6 +453,7 @@ int check_files_in_dir(int inode_idx){
  * returns the mode at the give idx. return -1 for error
  */
 int get_bitmap(int bm_idx, int idx){
+    // make idx starts from 0
     idx --;
     int num_bit = 0;
     unsigned char* target_bm;
@@ -564,6 +464,7 @@ int get_bitmap(int bm_idx, int idx){
         num_bit = sb->s_blocks_count;
         target_bm = block_bm;
     }
+    // loop over each bit
     for (int byte = 0; byte < num_bit / 8; byte++){
         for (int bit = 0; bit < 8; bit++){
             if ((byte*8+bit) == idx){
@@ -574,14 +475,21 @@ int get_bitmap(int bm_idx, int idx){
             }
         }
     }
+    // indicating error
     return -1;
 }
 
+/*
+ * check if each block using by inode marked as in use or
+ * not in block bitmap. If block bitmap's value is not match
+ * with blocks in inode, trust the blocks and print fix message.
+ */
 int check_blocks(int inode_idx){
     int errors = 0;
     struct ext2_inode* inode = &inode_table[inode_idx];
     int block_need = inode->i_blocks/2;
 
+    // check commen blocks
     for (int i =0; i < block_need && i<12;i++){
         if (get_bitmap(1, inode->i_block[i]) == 0){
             set_bitmap(1, inode->i_block[i], 1);
@@ -590,6 +498,7 @@ int check_blocks(int inode_idx){
             errors ++;
         }
     }
+    // check indirect blocks
     if (block_need>12){
         if (get_bitmap(1, inode->i_block[12]) == 0) {
             set_bitmap(1, inode->i_block[12], 1);
@@ -597,6 +506,7 @@ int check_blocks(int inode_idx){
             gdt->bg_free_blocks_count--;
             errors ++;
         }
+        // go to indirection
         int* location = (int *)(disk + inode->i_block[12]*EXT2_BLOCK_SIZE);
         for (int k = 0; k < block_need-13; k++) {
             if (get_bitmap(1, location[k]) == 0){
@@ -607,14 +517,20 @@ int check_blocks(int inode_idx){
             }
         }
     }
+    // print out fixed contents
     if (errors){
         printf("Fixed: %d in-use data blocks not marked in data bitmap for inode: [%d]\n", errors, inode_idx+1);
     }
-
     return errors;
 }
 
-
+/*
+ * Given the first directory entry and construct a linked list which
+ * contains a directory entry and a pointer to next directory entry.
+ * DIFFERENT: different with previous one, this function return a new
+ * linked list instead of change the global variable.
+ * NOTE this is a special case used for rm bonus!
+ */
 dir_ll* constrcut_dir_ll_spe(struct ext2_dir_entry* dir_entry, dir_ll* head){
     struct ext2_inode* inode = &inode_table[dir_entry->inode-1];
 
@@ -628,6 +544,7 @@ dir_ll* constrcut_dir_ll_spe(struct ext2_dir_entry* dir_entry, dir_ll* head){
             cur_dir_ll =malloc(sizeof(dir_ll));
             cur_dir_ll->dir_ent=dir_entry;
             cur_dir_ll->next=head;
+            // indication if it starts from a new block
             if (k==0){
                 cur_dir_ll->new_block=1;
             } else{
@@ -659,13 +576,15 @@ dir_ll* constrcut_dir_ll_spe(struct ext2_dir_entry* dir_entry, dir_ll* head){
 /*
  * inode_idx starts from 1
  * This function recrsive delete everything underlying this inode if possible (DIR)
+ * NOTE this is a special case used for rm bonus!
  */
 void release_all(int inode_idx){
-//    printf("===> %d\n", inode_idx);
-
+    // first delete this inode itself.
     set_bitmap(0,inode_idx,0);
     sb->s_free_inodes_count++;
     gdt->bg_free_inodes_count++;
+
+    // minus used dir counter
     struct ext2_inode* current = &inode_table[inode_idx-1];
     if (current->i_mode & EXT2_S_IFDIR){
         gdt->bg_used_dirs_count--;
@@ -676,6 +595,7 @@ void release_all(int inode_idx){
         sb->s_free_blocks_count++;
         gdt->bg_free_blocks_count++;
     }
+    // consider indirection
     if (block_used>12){
         int* indirection = (int *)(disk + current->i_block[12]*EXT2_BLOCK_SIZE);
         for (int i=0; i< block_used-13;i++){
@@ -684,6 +604,8 @@ void release_all(int inode_idx){
             gdt->bg_free_blocks_count++;
         }
     }
+
+    // then delete everything under this folder
     if (current->i_mode & EXT2_S_IFDIR){
         dir_ll* head= NULL;
         struct ext2_dir_entry* dir_ent = (struct ext2_dir_entry*) (disk + EXT2_BLOCK_SIZE*current->i_block[0]);
@@ -723,4 +645,19 @@ void free_dir_ll(dir_ll* head){
         free(head);
         head = temp;
     }
+}
+
+/*
+ * Given a directory entry, return its minimal possible record length.
+ */
+int get_rec_len(struct ext2_dir_entry* dir_ent){
+    int result = 8;
+    result+=dir_ent->name_len;
+    if (dir_ent->name_len==0){
+        return 0;
+    }
+    while (result%4!=0){
+        result++;
+    }
+    return result;
 }
