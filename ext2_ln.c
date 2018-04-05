@@ -13,6 +13,7 @@ int main(int argc, char **argv) {
     }
     // if symbolic
     int symbolic = 0;
+    // make sure flag is valid
     if (argc==5 && strncmp("-s", argv[2],2)!=0){
         fprintf(stderr, "invalid arguments\n");
         exit(1);
@@ -53,16 +54,16 @@ int main(int argc, char **argv) {
 
     // error handling
     if (check_type(parent_dir_sec, name_2)!=0){
-        printf("exist already\n");
+        printf("same name DIR/REG exist already\n");
         exit(EEXIST);
     }
 
-    if (check_type(parent_dir_fir, name_1)==2){
-        printf("cannot link directory\n");
+    if (check_type(parent_dir_fir, name_1)==2 && (!symbolic)){
+        printf("cannot hard link directory\n");
         return EISDIR;
     }
 
-    // if symbolic, new inode and iblock needed
+    // if symbolic, new inode and block needed
     if (symbolic){
         // allocate new inode
         int free_inode_idx = find_free_inode() + 1;
@@ -83,6 +84,7 @@ int main(int argc, char **argv) {
         set_bitmap(1, free_block_idx, 1);
         sb->s_free_blocks_count--;
         gdt->bg_free_blocks_count--;
+        // transfer data to block
         memcpy(disk + EXT2_BLOCK_SIZE*free_block_idx, argv[3], path_len);
         struct ext2_dir_entry* new_add = add_parent_block(parent_dir_sec, name_2, EXT2_FT_SYMLINK);
         new_add->inode = (unsigned int) free_inode_idx;
@@ -90,6 +92,7 @@ int main(int argc, char **argv) {
         // hardlink only requires add an entry
         struct ext2_dir_entry* new_add = add_parent_block(parent_dir_sec, name_2, EXT2_FT_REG_FILE);
         struct ext2_dir_entry* link = get_dir_ent(parent_dir_fir, name_1);
+        // update newly added entry's inode
         new_add->inode = link->inode;
         inode_table[new_add->inode-1].i_links_count++;
     }

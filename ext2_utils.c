@@ -271,7 +271,8 @@ struct ext2_dir_entry* add_parent_block(struct ext2_dir_entry* dir_entry, char* 
         inode->i_blocks += 2;
         inode->i_size+=EXT2_BLOCK_SIZE;
         int free_block_idx = find_free_block() + 1;
-        inode->i_block[1]= (unsigned int) free_block_idx;
+        int block_used=inode->i_blocks/2;
+        inode->i_block[block_used-1]= (unsigned int) free_block_idx;
         set_bitmap(0, free_block_idx, 1);
         sb->s_free_blocks_count--;
         gdt->bg_free_inodes_count--;
@@ -315,7 +316,6 @@ void constrcut_dir_ll(struct ext2_dir_entry* dir_entry){
             k += dir_entry->rec_len;
             dir_entry = (void*)(dir_entry) + dir_entry -> rec_len;
         }
-
     }
 
     // now reverse this linked list

@@ -96,7 +96,7 @@ int main(int argc, char **argv) {
             }
         }
     }
-    
+
     // check d time by loop over inode tables. change every file, directory, and links'
     // dtime to 0 if it's originally 1.
     for (int k = 0; k < sb->s_inodes_count; k++) {

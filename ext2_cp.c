@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
     // validate abs path on img
     validate_path(argv[3]);
 
-    // validate local path
+    // validate local path, using access sys call to determine if exists
     if (access(argv[2], F_OK)!=0){
         fprintf(stderr, "invalid local file path");
         exit(ENOENT);

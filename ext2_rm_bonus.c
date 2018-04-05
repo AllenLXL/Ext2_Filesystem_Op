@@ -7,17 +7,27 @@
 
 int main(int argc, char **argv) {
     // trivial init stuff
-    if (argc != 3) {
-        fprintf(stderr, "Usage: %s <image file name> <abs path of ext2>\n", argv[0]);
+    if (argc != 3 && argc != 4) {
+        fprintf(stderr, "Usage: %s <image file name> (-r) <abs path of ext2>\n", argv[0]);
         exit(1);
     }
-    validate_path(argv[2]);
+    if (argc==3){
+        validate_path(argv[2]);
+    } else{
+        validate_path(argv[3]);
+    }
+
 
     init_ptrs(argv[1]);
 
     // init global link list
     first_front=NULL;
-    construct_ll(argv[2], &first_front);
+    if (argc==3){
+        construct_ll(argv[2], &first_front);
+    } else{
+        construct_ll(argv[3], &first_front);
+    }
+
 
     char* name = get_last_name(first_front);
 
@@ -28,7 +38,7 @@ int main(int argc, char **argv) {
     if (!type){
         fprintf(stderr, "File to delete not exist\n");
         exit(ENOENT);
-    } else if (type==2){
+    } else if (type==2 && argc == 4){
         // rm dir bonus case, special treatment
         dir_ll_head=NULL;
         constrcut_dir_ll(dir_ent);
@@ -45,6 +55,9 @@ int main(int argc, char **argv) {
         free_ll(first_front);
         free_dir_ll(dir_ll_head);
         return 0;
+    }else if (type==2){
+        fprintf(stderr, "Cannot remove a directory without -r flag\n");
+        exit(EISDIR);
     }
 
     // if we are remove the first dir ent
