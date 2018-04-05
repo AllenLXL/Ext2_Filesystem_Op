@@ -13,10 +13,14 @@ int main(int argc, char **argv) {
     }
     // if symbolic
     int symbolic = 0;
-    if (argc == 5){
+    if (argc==5 && strncmp("-s", argv[2],2)!=0){
+        fprintf(stderr, "invalid arguments\n");
+        exit(1);
+    }
+    if (argc == 5 && strncmp("-s", argv[2],2)==0){
         symbolic =1;
     }
-    if (argc == 5){
+    if (argc == 5&& strncmp("-s", argv[2],2)==0){
         validate_path(argv[3]);
         validate_path(argv[4]);
     } else{

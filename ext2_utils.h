@@ -37,6 +37,7 @@ typedef struct linked_list{
 typedef struct dir_ent_linklst{
     struct dir_ent_linklst* next;
     struct ext2_dir_entry* dir_ent;
+    int new_block;
 } dir_ll;
 dir_ll* dir_ll_head;
 

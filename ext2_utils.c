@@ -423,7 +423,11 @@ void constrcut_dir_ll(struct ext2_dir_entry* dir_entry){
             cur_dir_ll->dir_ent=dir_entry;
             cur_dir_ll->next=dir_ll_head;
             dir_ll_head = cur_dir_ll;
-
+            if (k==0){
+                cur_dir_ll->new_block=1;
+            } else{
+                cur_dir_ll->new_block=0;
+            }
             k += dir_entry->rec_len;
             dir_entry = (void*)(dir_entry) + dir_entry -> rec_len;
         }
@@ -624,6 +628,11 @@ dir_ll* constrcut_dir_ll_spe(struct ext2_dir_entry* dir_entry, dir_ll* head){
             cur_dir_ll =malloc(sizeof(dir_ll));
             cur_dir_ll->dir_ent=dir_entry;
             cur_dir_ll->next=head;
+            if (k==0){
+                cur_dir_ll->new_block=1;
+            } else{
+                cur_dir_ll->new_block=0;
+            }
             head = cur_dir_ll;
 
             k += dir_entry->rec_len;
