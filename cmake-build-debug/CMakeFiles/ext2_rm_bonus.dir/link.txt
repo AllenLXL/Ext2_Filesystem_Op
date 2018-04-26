@@ -1,0 +1,1 @@
+/Library/Developer/CommandLineTools/usr/bin/cc -g -Wl,-search_paths_first -Wl,-headerpad_max_install_names  CMakeFiles/ext2_rm_bonus.dir/ext2_rm_bonus.c.o CMakeFiles/ext2_rm_bonus.dir/ext2_utils.c.o  -o ext2_rm_bonus 

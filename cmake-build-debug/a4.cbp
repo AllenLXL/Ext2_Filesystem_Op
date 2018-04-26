@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="a4"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/liallen/CLionProjects/a4/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/Users/liallen/CLionProjects/a4/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="readimage">
+				<Option output="/Users/liallen/CLionProjects/a4/cmake-build-debug/readimage" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/liallen/CLionProjects/a4/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 readimage"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="readimage/fast">
+				<Option output="/Users/liallen/CLionProjects/a4/cmake-build-debug/readimage" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/liallen/CLionProjects/a4/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 readimage/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ext2_checker">
+				<Option output="/Users/liallen/CLionProjects/a4/cmake-build-debug/ext2_checker" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/liallen/CLionProjects/a4/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 ext2_checker"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ext2_checker/fast">
+				<Option output="/Users/liallen/CLionProjects/a4/cmake-build-debug/ext2_checker" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/liallen/CLionProjects/a4/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 ext2_checker/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ext2_rm_bonus">
+				<Option output="/Users/liallen/CLionProjects/a4/cmake-build-debug/ext2_rm_bonus" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/liallen/CLionProjects/a4/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 ext2_rm_bonus"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ext2_rm_bonus/fast">
+				<Option output="/Users/liallen/CLionProjects/a4/cmake-build-debug/ext2_rm_bonus" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/liallen/CLionProjects/a4/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 ext2_rm_bonus/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ext2_rm">
+				<Option output="/Users/liallen/CLionProjects/a4/cmake-build-debug/ext2_rm" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/liallen/CLionProjects/a4/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 ext2_rm"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ext2_rm/fast">
+				<Option output="/Users/liallen/CLionProjects/a4/cmake-build-debug/ext2_rm" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/liallen/CLionProjects/a4/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 ext2_rm/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ext2_ln">
+				<Option output="/Users/liallen/CLionProjects/a4/cmake-build-debug/ext2_ln" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/liallen/CLionProjects/a4/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 ext2_ln"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ext2_ln/fast">
+				<Option output="/Users/liallen/CLionProjects/a4/cmake-build-debug/ext2_ln" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/liallen/CLionProjects/a4/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 ext2_ln/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ext2_mkdir">
+				<Option output="/Users/liallen/CLionProjects/a4/cmake-build-debug/ext2_mkdir" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/liallen/CLionProjects/a4/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 ext2_mkdir"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ext2_mkdir/fast">
+				<Option output="/Users/liallen/CLionProjects/a4/cmake-build-debug/ext2_mkdir" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/liallen/CLionProjects/a4/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 ext2_mkdir/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/Users/liallen/CLionProjects/a4/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ext2_restore">
+				<Option output="/Users/liallen/CLionProjects/a4/cmake-build-debug/ext2_restore" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/liallen/CLionProjects/a4/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 ext2_restore"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ext2_restore/fast">
+				<Option output="/Users/liallen/CLionProjects/a4/cmake-build-debug/ext2_restore" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/liallen/CLionProjects/a4/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 ext2_restore/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ext2_cp">
+				<Option output="/Users/liallen/CLionProjects/a4/cmake-build-debug/ext2_cp" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/liallen/CLionProjects/a4/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 ext2_cp"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="ext2_cp/fast">
+				<Option output="/Users/liallen/CLionProjects/a4/cmake-build-debug/ext2_cp" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/liallen/CLionProjects/a4/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/9.0.0/include"/>
+					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 ext2_cp/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/Users/liallen/CLionProjects/a4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/liallen/CLionProjects/a4/ext2.h">
+			<Option target="readimage"/>
+			<Option target="ext2_checker"/>
+			<Option target="ext2_rm_bonus"/>
+			<Option target="ext2_rm"/>
+			<Option target="ext2_ln"/>
+			<Option target="ext2_mkdir"/>
+			<Option target="ext2_restore"/>
+			<Option target="ext2_cp"/>
+		</Unit>
+		<Unit filename="/Users/liallen/CLionProjects/a4/ext2_checker.c">
+			<Option target="ext2_checker"/>
+		</Unit>
+		<Unit filename="/Users/liallen/CLionProjects/a4/ext2_cp.c">
+			<Option target="ext2_cp"/>
+		</Unit>
+		<Unit filename="/Users/liallen/CLionProjects/a4/ext2_ln.c">
+			<Option target="ext2_ln"/>
+		</Unit>
+		<Unit filename="/Users/liallen/CLionProjects/a4/ext2_mkdir.c">
+			<Option target="ext2_mkdir"/>
+		</Unit>
+		<Unit filename="/Users/liallen/CLionProjects/a4/ext2_restore.c">
+			<Option target="ext2_restore"/>
+		</Unit>
+		<Unit filename="/Users/liallen/CLionProjects/a4/ext2_rm.c">
+			<Option target="ext2_rm"/>
+		</Unit>
+		<Unit filename="/Users/liallen/CLionProjects/a4/ext2_rm_bonus.c">
+			<Option target="ext2_rm_bonus"/>
+		</Unit>
+		<Unit filename="/Users/liallen/CLionProjects/a4/ext2_utils.c">
+			<Option target="ext2_checker"/>
+			<Option target="ext2_rm_bonus"/>
+			<Option target="ext2_rm"/>
+			<Option target="ext2_ln"/>
+			<Option target="ext2_mkdir"/>
+			<Option target="ext2_restore"/>
+			<Option target="ext2_cp"/>
+		</Unit>
+		<Unit filename="/Users/liallen/CLionProjects/a4/ext2_utils.h">
+			<Option target="ext2_checker"/>
+			<Option target="ext2_rm_bonus"/>
+			<Option target="ext2_rm"/>
+			<Option target="ext2_ln"/>
+			<Option target="ext2_mkdir"/>
+			<Option target="ext2_restore"/>
+			<Option target="ext2_cp"/>
+		</Unit>
+		<Unit filename="/Users/liallen/CLionProjects/a4/readimage.c">
+			<Option target="readimage"/>
+		</Unit>
+		<Unit filename="/Users/liallen/CLionProjects/a4/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

@@ -1,0 +1,10 @@
+/Users/liallen/CLionProjects/a4/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/liallen/CLionProjects/a4/cmake-build-debug/CMakeFiles/readimage.dir
+/Users/liallen/CLionProjects/a4/cmake-build-debug/CMakeFiles/ext2_checker.dir
+/Users/liallen/CLionProjects/a4/cmake-build-debug/CMakeFiles/ext2_rm_bonus.dir
+/Users/liallen/CLionProjects/a4/cmake-build-debug/CMakeFiles/ext2_rm.dir
+/Users/liallen/CLionProjects/a4/cmake-build-debug/CMakeFiles/ext2_ln.dir
+/Users/liallen/CLionProjects/a4/cmake-build-debug/CMakeFiles/ext2_mkdir.dir
+/Users/liallen/CLionProjects/a4/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/liallen/CLionProjects/a4/cmake-build-debug/CMakeFiles/ext2_restore.dir
+/Users/liallen/CLionProjects/a4/cmake-build-debug/CMakeFiles/ext2_cp.dir

@@ -1,0 +1,40 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/liallen/CLionProjects/a4/ext2.h
+
+/Users/liallen/CLionProjects/a4/ext2_mkdir.c
+ext2_utils.h
+/Users/liallen/CLionProjects/a4/ext2_utils.h
+
+/Users/liallen/CLionProjects/a4/ext2_utils.c
+ext2_utils.h
+/Users/liallen/CLionProjects/a4/ext2_utils.h
+
+/Users/liallen/CLionProjects/a4/ext2_utils.h
+stdio.h
+-
+unistd.h
+-
+stdlib.h
+-
+sys/types.h
+-
+sys/stat.h
+-
+fcntl.h
+-
+sys/mman.h
+-
+errno.h
+-
+memory.h
+-
+ext2.h
+/Users/liallen/CLionProjects/a4/ext2.h
+
